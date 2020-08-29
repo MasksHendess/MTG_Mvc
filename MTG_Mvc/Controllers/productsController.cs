@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using MTG_Mvc.DBContext;
 using MTG_Mvc.Models;
 using MTG_Mvc.Services;
 using Newtonsoft.Json;
@@ -18,9 +19,11 @@ namespace MTG_Mvc.Controllers
     public class productsController : ControllerBase
     {
         public JsonFileProductService ProductService { get; }
-        public productsController(JsonFileProductService productService)
+        private readonly SqlDbContext dbContext;
+        public productsController(JsonFileProductService productService, SqlDbContext DbContext)
         {
             ProductService = productService;
+            dbContext = DbContext;
         }
 
         [HttpGet]
@@ -39,6 +42,27 @@ namespace MTG_Mvc.Controllers
             return Ok();
         }
 
+        [HttpDelete]
+        [Route("decklist/{id}")] //products/decklist
+        public ActionResult DeleteDeck(string id)
+        {
+            decklist Killme = dbContext.decklists.Where(x => x.id == id).FirstOrDefault();
+            if (Killme != null)
+            {
+                dbContext.decklists.Remove(Killme);
+                dbContext.SaveChanges();
+            }
+            return Ok();
+        }
+
+        [HttpGet]
+        [Route("decklist")] //products/decklist
+        public ActionResult<List<decklist>> GetDecklists()
+        {
+            var Result = dbContext.decklists.ToList();
+            return Result;
+        }
+
         [HttpPost]
         [Route("decklist")] //products/decklist
         public async Task<IActionResult> Index()
@@ -48,17 +72,20 @@ namespace MTG_Mvc.Controllers
 
             string[] splitRequestBody = requestBody.Split("\n");
 
-            decklist NewDeck = new decklist(); 
+            decklist NewDeck = new decklist();
             int id = 0;
+            NewDeck.id = id.ToString();
+
+
             foreach (var line in splitRequestBody)
             {
                 card NewCard = new card();
-                NewCard.id = id;
-                id++;
+                //NewCard.id = id;
+                //id++;
 
                 int quantity = line[0] - '0';
                 NewCard.quantity = quantity;
-                
+
                 int subStringIndex = 0;
                 foreach (var setSign in line)
                 {
@@ -66,8 +93,8 @@ namespace MTG_Mvc.Controllers
                     {
                         subStringIndex = line.IndexOf(setSign);
                     }
-                    
-                    NewCard.set = line.Substring(subStringIndex + 1, 3); 
+
+                    NewCard.set = line.Substring(subStringIndex + 1, 3);
                 }
 
                 int index = line.IndexOf('(');
@@ -78,6 +105,9 @@ namespace MTG_Mvc.Controllers
 
                 NewDeck.cards.Add(NewCard);
             }
+
+            dbContext.decklists.Add(NewDeck);
+            await dbContext.SaveChangesAsync();
 
             return Ok(NewDeck);
         }
