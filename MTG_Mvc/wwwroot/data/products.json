@@ -1,0 +1,20 @@
+[
+  {
+    "id": "ELD_KORVOLD",
+    "cmc": "2BRG",
+    "img": "https://c1.scryfall.com/file/scryfall-cards/large/front/9/2/92ea1575-eb64-43b5-b604-c6e23054f228.jpg?1571197150",
+    "cardtitle": "Korvold, Fae Cursed King",
+    "description": "Flying 4/4",
+    "ratings": [
+      5
+    ]
+  },
+  {
+    "id": "ELD_CHULANE",
+    "cmc": "2GWU",
+    "img": "https://c1.scryfall.com/file/scryfall-cards/large/front/8/3/83f43730-1c1f-4150-8771-d901c54bedc4.jpg?1571282906",
+    "cardtitle": "Chulane, Teller of Tales",
+    "description": "Flying 4/4",
+    "ratings": null
+  }
+]

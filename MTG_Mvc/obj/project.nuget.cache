@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "rsRRx7U/RiG/7L99ZMJf0B4kwd/nqaYFL3BuAtdl2NBa6lpIG+XOwx4lhOTqvnZj4fWyN9UiV2x1d6kzJvWgWA==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\Max\\Desktop\\mvc\\AspNetWebStack\\MTG_Mvc\\MTG_Mvc\\MTG_Mvc.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Max\\.nuget\\packages\\newtonsoft.json\\12.0.3\\newtonsoft.json.12.0.3.nupkg.sha512"
+  ],
+  "logs": []
+}
