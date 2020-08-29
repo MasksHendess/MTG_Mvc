@@ -43,45 +43,42 @@ namespace MTG_Mvc.Controllers
         [Route("decklist")] //products/decklist
         public async Task<IActionResult> Index()
         {
-            //string T = "ABCD";
-            //string ST = T.Substring(3, 1);
             var reader = new StreamReader(HttpContext.Request.Body);
-            string body = await reader.ReadToEndAsync();
+            string requestBody = await reader.ReadToEndAsync();
 
-            string[] Lines = body.Split("\n");
-            var result = JsonConvert.SerializeObject(Lines);
+            string[] splitRequestBody = requestBody.Split("\n");
 
             decklist NewDeck = new decklist(); 
             int id = 0;
-            foreach (var item in Lines)
+            foreach (var line in splitRequestBody)
             {
                 card NewCard = new card();
                 NewCard.id = id;
                 id++;
 
-                int quantity = item[0] - '0';
+                int quantity = line[0] - '0';
                 NewCard.quantity = quantity;
                 
-                int start = 0;
-                foreach (var sign in item)
+                int subStringIndex = 0;
+                foreach (var setSign in line)
                 {
-                    if (sign == '(')
+                    if (setSign == '(')
                     {
-                        start = item.IndexOf(sign);
+                        subStringIndex = line.IndexOf(setSign);
                     }
                     
-                    NewCard.set = item.Substring(start + 1, 3); 
+                    NewCard.set = line.Substring(subStringIndex + 1, 3); 
                 }
 
-                int index = item.IndexOf('(');
+                int index = line.IndexOf('(');
                 if (index > 0)
                 {
-                    NewCard.name = item.Substring(1, index - 1);
+                    NewCard.name = line.Substring(1, index - 1);
                 }
 
                 NewDeck.cards.Add(NewCard);
             }
-            //  
+
             return Ok(NewDeck);
         }
     }
