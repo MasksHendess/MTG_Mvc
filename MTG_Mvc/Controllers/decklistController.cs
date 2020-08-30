@@ -18,11 +18,9 @@ namespace MTG_Mvc.Controllers
     [ApiController]
     public class decklistController : ControllerBase
     {
-        private readonly SqlDbContext dbContext; 
         public decklistService deckListService { get; set; }
-        public decklistController( SqlDbContext DbContext, decklistService DeckListService)
+        public decklistController( decklistService DeckListService)
         {
-            dbContext = DbContext;
             deckListService = DeckListService;
         }
 

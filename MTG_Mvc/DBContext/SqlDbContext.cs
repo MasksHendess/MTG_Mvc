@@ -14,6 +14,7 @@ namespace MTG_Mvc.DBContext
 
         }
         public DbSet<decklist> decklists { get; set; }
+        public DbSet<card> cards { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseSqlServer(@"Server=.\SQLEXPRESS;Database=MTG_MvcDB;Trusted_Connection=True;");
