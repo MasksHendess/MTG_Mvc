@@ -37,7 +37,7 @@ namespace MTG_Mvc
             //options.UseSqlServer(@"Server=.;Database=MTG_Mvc;User=sa;Password=change_this_password;"));
             services.AddDbContext<SqlDbContext>();
             services.AddScoped<decklist>();
-
+            services.AddScoped<decklistService>();
             services.AddMvc();
         }
 
