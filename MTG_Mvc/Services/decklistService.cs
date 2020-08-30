@@ -28,21 +28,22 @@ namespace MTG_Mvc.Services
             return result;
         }
 
+        public List<card> GetDecklist(int id)
+        {
+            //var result = dbContext.cards.Where(s => s.id == id).ToList();
+            var result = dbContext.cards.Where(x => x.decklistid == id).ToList();
+            return result;
+        }
+
         public decklist PostDeckList(string Decklist)
         {
             string[] splitRequestBody = Decklist.Split("\n");
-
             decklist NewDeck = new decklist();
-            int id = dbContext.decklists.Count() + 1;
-            NewDeck.id = id.ToString();
 
 
             foreach (var line in splitRequestBody)
             {
                 card NewCard = new card();
-                //NewCard.id = id;
-                //id++;
-
                 int quantity = line[0] - '0';
                 NewCard.quantity = quantity;
 
@@ -66,8 +67,16 @@ namespace MTG_Mvc.Services
                 NewDeck.cards.Add(NewCard);
             }
 
+            foreach (var item in NewDeck.cards)
+            {
+                if (item.set =="eck")
+                {
+                    NewDeck.cards.Remove(item);
+                    break;
+                }
+            }
             dbContext.decklists.Add(NewDeck);
-            dbContext.SaveChangesAsync();
+            dbContext.SaveChanges();
 
             return NewDeck;
         }
