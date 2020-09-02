@@ -5,8 +5,10 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using MTG_Mvc.DBContext;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -30,6 +32,13 @@ namespace MTG_Mvc
             services.AddRazorPages();
             services.AddControllers();
             services.AddTransient<JsonFileProductService>();
+
+            //services.AddDbContext<DbContext>(options =>
+            //options.UseSqlServer(@"Server=.;Database=MTG_Mvc;User=sa;Password=change_this_password;"));
+            services.AddDbContext<SqlDbContext>();
+            services.AddScoped<decklist>();
+            services.AddScoped<decklistService>();
+            services.AddMvc();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -57,6 +66,7 @@ namespace MTG_Mvc
             {
                 endpoints.MapRazorPages();
                 endpoints.MapControllers();
+
                 //endpoints.MapGet("/products", (context) =>
                 //{
                 //    var products = app.ApplicationServices.GetService<JsonFileProductService>().GetProducts();

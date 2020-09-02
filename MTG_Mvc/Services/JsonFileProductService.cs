@@ -40,7 +40,7 @@ namespace MTG_Mvc.Services
             var products = GetProducts();
             var query = products.First(x => x.id == productId);
 
-         
+
         }
 
         public void AddRating(string productId, int rating)
@@ -48,7 +48,7 @@ namespace MTG_Mvc.Services
             var products = GetProducts();
             var query = products.First(x => x.id == productId);
 
-            if(query.ratings == null)
+            if (query.ratings == null)
             {
                 query.ratings = new int[] { rating };
             }
@@ -70,7 +70,7 @@ namespace MTG_Mvc.Services
                     products
                     );
             }
-            
+
         }
     }
 }
