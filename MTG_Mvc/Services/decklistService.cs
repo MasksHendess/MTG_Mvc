@@ -40,44 +40,41 @@ namespace MTG_Mvc.Services
             string[] splitRequestBody = Decklist.Split("\n");
             decklist NewDeck = new decklist();
 
-
             foreach (var line in splitRequestBody)
             {
-                card NewCard = new card();
-                int quantity = line[0] - '0';
-                NewCard.quantity = quantity;
-
-                int subStringIndex = 0;
-                foreach (var setSign in line)
+                if (line != "Deck\r")
                 {
-                    if (setSign == '(')
+                    card NewCard = new card();
+                   
+                    string[] splitLine = line.Split(" ");               // [0]20    [1]Mountain    [2](IKO)
+                    // This works great except that cardnames can contain whitespaces 
+                    NewCard.quantity = Convert.ToInt32(splitLine[0]);
+
+                    string name = "";
+                    int i = 0;
+                    foreach (var item in splitLine)
                     {
-                        subStringIndex = line.IndexOf(setSign);
+                        if(item.Contains("("))
+                        {
+                            NewCard.set = item;
+                            NewCard.name = name.Substring(0,name.Length-1);
+                        }
+                        if(i >0) // item 0 is not part of name
+                        { 
+                        name += item + " ";
+                        }
+                        i++;
                     }
 
-                    NewCard.set = line.Substring(subStringIndex + 1, 3);
-                }
-
-                int index = line.IndexOf('(');
-                if (index > 0)
-                {
-                    NewCard.name = line.Substring(1, index - 1);
-                }
-
-                NewDeck.cards.Add(NewCard);
-            }
-
-            foreach (var item in NewDeck.cards)
-            {
-                if (item.set =="eck")
-                {
-                    NewDeck.cards.Remove(item);
-                    break;
+                    NewDeck.cards.Add(NewCard);
                 }
             }
+
+            if(NewDeck!= null)
+            { 
             dbContext.decklists.Add(NewDeck);
             dbContext.SaveChanges();
-
+            }
             return NewDeck;
         }
 
