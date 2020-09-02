@@ -14,6 +14,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using MTG_Mvc.Models;
 using MTG_Mvc.Services;
+using MTG_Mvc.Interface;
 
 namespace MTG_Mvc
 {
@@ -38,6 +39,7 @@ namespace MTG_Mvc
             services.AddDbContext<SqlDbContext>();
             services.AddScoped<decklist>();
             services.AddScoped<decklistService>();
+            services.AddScoped(typeof(IdecklistInterface), typeof(decklistService));
             services.AddMvc();
         }
 

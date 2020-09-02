@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using MTG_Mvc.DBContext;
+using MTG_Mvc.Interface;
 using MTG_Mvc.Models;
 using MTG_Mvc.Services;
 using Newtonsoft.Json;
@@ -18,42 +19,34 @@ namespace MTG_Mvc.Controllers
     [ApiController]
     public class decklistController : ControllerBase
     {
-        public decklistService deckListService { get; set; }
-        public decklistController( decklistService DeckListService)
+        public IdecklistInterface Idecklist { get; set; }
+        public decklistController( IdecklistInterface DecklistInterface)
         {
-            deckListService = DeckListService;
+            Idecklist = DecklistInterface;
         }
 
         [HttpDelete]
-        [Route("/{id}")] //products/decklist
-        public ActionResult DeleteDeck(string id)
+        public ActionResult DeleteDeck(int id)
         {
-            //decklist Killme = dbContext.decklists.Where(x => x.id == id).FirstOrDefault();
-            //if (Killme != null)
-            //{
-            //    dbContext.decklists.Remove(Killme);
-            //    dbContext.SaveChanges();
-            //}
-            return Ok();
+            if (id <= 0)
+                return BadRequest("Invalid deck id");
+           var result = Idecklist.DeleteDeckList(id);
+            return Ok(result);
         }
 
         [HttpGet]
-       // [Route("decklist")] //products/decklist
         public ActionResult<List<decklist>> GetDecklists()
         {
-            var result = deckListService.GetAllDeckLists();
+            var result = Idecklist.GetAllDeckLists();
             return result;
         }
 
         [HttpPost]
-       // [Route("decklist")] //products/decklist
         public async Task<IActionResult> Index()
         {
             var reader = new StreamReader(HttpContext.Request.Body);
             string requestBody = await reader.ReadToEndAsync();
-            var NewDeck = deckListService.PostDeckList(requestBody);
-
-
+            var NewDeck = Idecklist.PostDeckList(requestBody);
             return Ok(NewDeck); 
         }
     }
