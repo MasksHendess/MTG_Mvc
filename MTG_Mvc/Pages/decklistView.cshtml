@@ -6,16 +6,16 @@
 
 <div class="text-center">
     <h1 class="display-4">Decklist</h1>
-    @foreach (var card in Model.decklist)
-    {
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title">
-                    @card.name
-                </h5>
-                <p>@card.quantity</p>
-                <p>@card.set</p>
-            </div>
-        </div>
-    }
+    <table>
+        <tr>
+            <td>Cards:</td>
+        </tr>
+        @foreach (var card in Model.decklist)
+        {
+            <tr>
+                <td id="@card.name" data-toggle="tooltip" 
+                  title="<img src='@card.imageUrl' />" data-placement="right"> @card.quantity x  @card.name</td>
+            </tr>
+        }
+    </table>
 </div>

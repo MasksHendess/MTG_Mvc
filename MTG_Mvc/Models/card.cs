@@ -17,6 +17,7 @@ namespace MTG_Mvc.Models
         public int quantity{ get; set; }
         public string name{ get; set; }
         public string set { get; set; }
+        public string imageUrl { get; set; }
 
         [ForeignKey("decklist")]
         public int decklistid { get; set; }
