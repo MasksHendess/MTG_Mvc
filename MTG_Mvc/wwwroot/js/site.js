@@ -8,7 +8,7 @@
 //    $('[data-toggle="tooltip"]').tooltip();
 //})
 
-$('td[data-toggle="tooltip"]').tooltip({
+$('li[data-toggle="tooltip"]').tooltip({
     animated: 'fade',
     placement: 'bottom',
     html: true

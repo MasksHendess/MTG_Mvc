@@ -20,11 +20,7 @@ namespace MTG_Mvc.Pages
         }
         public void OnGet()
         {
-            decklist = deckListService.GetDecklist(1);
-            foreach (var item in decklist)
-            {
-                item.imageUrl = "https://c1.scryfall.com/file/scryfall-cards/normal/front/8/3/83f43730-1c1f-4150-8771-d901c54bedc4.jpg?1571282906";
-            }
+            decklist = deckListService.GetDeckList(1);
         }
     }
 }
