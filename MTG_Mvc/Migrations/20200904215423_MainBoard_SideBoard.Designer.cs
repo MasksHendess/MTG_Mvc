@@ -3,14 +3,16 @@ using MTG_Mvc.DBContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace MTG_Mvc.Migrations
 {
     [DbContext(typeof(SqlDbContext))]
-    partial class SqlDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200904215423_MainBoard_SideBoard")]
+    partial class MainBoard_SideBoard
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -67,7 +69,7 @@ namespace MTG_Mvc.Migrations
 
             modelBuilder.Entity("MTG_Mvc.Domain.Entities.card", b =>
                 {
-                    b.HasOne("MTG_Mvc.Domain.Entities.decklist", null)
+                    b.HasOne("MTG_Mvc.Domain.Entities.decklist", "decklist")
                         .WithMany("cards")
                         .HasForeignKey("decklistid")
                         .OnDelete(DeleteBehavior.Cascade)

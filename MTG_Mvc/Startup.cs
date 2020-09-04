@@ -12,8 +12,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using MTG_Mvc.Models;
+using MTG_Mvc.Domain.Entities;
 using MTG_Mvc.Services;
+using MTG_Mvc.Repositories;
 
 namespace MTG_Mvc
 {
@@ -32,12 +33,15 @@ namespace MTG_Mvc
             services.AddRazorPages();
             services.AddControllers();
             services.AddTransient<JsonFileProductService>();
-
             //services.AddDbContext<DbContext>(options =>
             //options.UseSqlServer(@"Server=.;Database=MTG_Mvc;User=sa;Password=change_this_password;"));
             services.AddDbContext<SqlDbContext>();
             services.AddScoped<decklist>();
-            services.AddScoped<decklistService>();
+            services.AddScoped<decklistService>(); 
+            services.AddScoped<decklistRepository>();
+            services.AddScoped(typeof(IdecklistServiceInterface), typeof(decklistService));
+            services.AddScoped(typeof(IdecklistRepositoryInterface), typeof(decklistRepository));
+           
             services.AddMvc();
         }
 
@@ -66,7 +70,9 @@ namespace MTG_Mvc
             {
                 endpoints.MapRazorPages();
                 endpoints.MapControllers();
-
+                endpoints.MapControllerRoute(
+                    name: "default",
+                    pattern: "{controller=Home}/{action=Index}/{id?}");
                 //endpoints.MapGet("/products", (context) =>
                 //{
                 //    var products = app.ApplicationServices.GetService<JsonFileProductService>().GetProducts();

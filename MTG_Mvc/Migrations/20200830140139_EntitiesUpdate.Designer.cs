@@ -3,14 +3,16 @@ using MTG_Mvc.DBContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace MTG_Mvc.Migrations
 {
     [DbContext(typeof(SqlDbContext))]
-    partial class SqlDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200830140139_EntitiesUpdate")]
+    partial class EntitiesUpdate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -18,7 +20,7 @@ namespace MTG_Mvc.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-            modelBuilder.Entity("MTG_Mvc.Domain.Entities.card", b =>
+            modelBuilder.Entity("MTG_Mvc.Models.card", b =>
                 {
                     b.Property<int>("id")
                         .ValueGeneratedOnAdd()
@@ -27,12 +29,6 @@ namespace MTG_Mvc.Migrations
 
                     b.Property<int>("decklistid")
                         .HasColumnType("int");
-
-                    b.Property<string>("imageUrl")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("isMainBoard")
-                        .HasColumnType("bit");
 
                     b.Property<string>("name")
                         .HasColumnType("nvarchar(max)");
@@ -50,7 +46,7 @@ namespace MTG_Mvc.Migrations
                     b.ToTable("cards");
                 });
 
-            modelBuilder.Entity("MTG_Mvc.Domain.Entities.decklist", b =>
+            modelBuilder.Entity("MTG_Mvc.Models.decklist", b =>
                 {
                     b.Property<int>("id")
                         .ValueGeneratedOnAdd()
@@ -65,9 +61,9 @@ namespace MTG_Mvc.Migrations
                     b.ToTable("decklists");
                 });
 
-            modelBuilder.Entity("MTG_Mvc.Domain.Entities.card", b =>
+            modelBuilder.Entity("MTG_Mvc.Models.card", b =>
                 {
-                    b.HasOne("MTG_Mvc.Domain.Entities.decklist", null)
+                    b.HasOne("MTG_Mvc.Models.decklist", null)
                         .WithMany("cards")
                         .HasForeignKey("decklistid")
                         .OnDelete(DeleteBehavior.Cascade)
