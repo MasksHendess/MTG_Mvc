@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using MTG_Mvc.DBContext;
-using MTG_Mvc.Models;
+using MTG_Mvc.Domain.Entities;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -15,45 +15,37 @@ using System.Security.Cryptography.Xml;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
-using MTG_Mvc.Interface;
+using MTG_Mvc.Repositories;
 
 namespace MTG_Mvc.Services
 {
-    public class decklistService : IdecklistInterface
+    public class decklistService : IdecklistServiceInterface
     {
-        private readonly SqlDbContext dbContext;
+       // private readonly SqlDbContext dbContext;
+        private readonly decklistRepository decklistRepository;
         public IWebHostEnvironment WebHostEnvironment { get; }
-        public decklistService(SqlDbContext DbContext, IWebHostEnvironment webHostEnvironment)
+        public decklistService(IWebHostEnvironment webHostEnvironment, decklistRepository DecklistRepository)
         {
             WebHostEnvironment = webHostEnvironment;
-            dbContext = DbContext;
+            decklistRepository = DecklistRepository;
         }
 
-        public List<decklist> GetAllDeckLists()
+        public async Task<IEnumerable<decklist>> GetAllDeckListsAsync()
         {
-            var result = dbContext.decklists.ToList();
-            var cards = dbContext.cards.ToList();
-            foreach (var item in result)
-            {
-                var dbCards = cards.Where(x => x.decklistid == item.id).ToList();
-                item.cards = dbCards;
-            }
-            return result;
+            return await decklistRepository.GetAllDeckListsAsync();
         }
 
-        public List<card> GetDeckList(int id)
+        public async Task<decklist> GetDeckListByIdAsync(int id)
         {
-            var result = dbContext.cards.Where(x => x.decklistid == id).ToList();
-            return result;
+            return await decklistRepository.GetDeckListByIdAsync(id);
         }
 
-        public string DeleteDeckList(int id)
+        public async Task<decklist> DeleteDeckList(int id)
         {
-            decklist decklist = dbContext.decklists.Where(x => x.id == id).FirstOrDefault();
-            dbContext.decklists.Remove(decklist);
-            dbContext.SaveChanges();
-            return "Item Deleted";
-                }
+            var decklist = await decklistRepository.GetDeckListByIdAsync(id);
+            decklistRepository.Delete(decklist);
+            return decklist;
+        }
         public decklist PostDeckList(string Decklist)
         {
             string[] splitRequestBody = Decklist.Split("\n");
@@ -90,8 +82,9 @@ namespace MTG_Mvc.Services
 
             if (NewDeck != null)
             {
-                dbContext.decklists.Add(NewDeck);
-                dbContext.SaveChanges();
+                decklistRepository.Post(NewDeck);
+                //dbContext.decklists.Add(NewDeck);
+                //dbContext.SaveChanges();
             }
             return NewDeck;
         }
