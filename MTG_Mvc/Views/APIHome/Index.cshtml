@@ -8,7 +8,7 @@
     <thead>
         <tr>
             <th>
-                API Requests
+               Async API Requests
             </th>
             <th>
                 Path
@@ -18,10 +18,18 @@
     <tbody>
         <tr>
             <td>
-                (GET) Get Decks
+                (GET) Get all Decks
             </td>
             <td>
-                /decklist
+                /api/decklist
+            </td>
+        </tr>
+        <tr>
+            <td>
+                (GET) Get Deck by Id
+            </td>
+            <td>
+                /api/decklist/{id}
             </td>
         </tr>
         <tr>
@@ -29,7 +37,7 @@
                 (POST)Add new Deck
             </td>
             <td>
-                /decklist
+                /api/decklist
             </td>
         </tr>
         <tr>
@@ -37,7 +45,7 @@
                 (DEL) Delete Deck
             </td>
             <td>
-                /decklist?=id={id}
+                /api/decklist/{id}
             </td>
         </tr>
 

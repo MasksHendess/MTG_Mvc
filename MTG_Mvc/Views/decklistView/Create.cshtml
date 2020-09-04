@@ -18,6 +18,12 @@
                 <span asp-validation-for="deckName" class="text-danger"></span>
             </div>
             <div class="form-group">
+                <label asp-for="cards" class="control-label"></label>
+                <textarea asp-for="cards" class="form-control">
+                </textarea>
+                <span asp-validation-for="cards" class="text-danger"></span>
+            </div>
+            <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>
         </form>

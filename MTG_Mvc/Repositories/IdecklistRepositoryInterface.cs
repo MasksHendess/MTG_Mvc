@@ -15,6 +15,7 @@ namespace MTG_Mvc.Repositories
         void Delete(decklist decklist);
 
         void Post(decklist decklist);
-        
+
+        void Update(decklist decklist);
     }
 }

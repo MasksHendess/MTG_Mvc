@@ -33,7 +33,6 @@ namespace MTG_Mvc
             services.AddRazorPages();
             services.AddControllers();
             services.AddTransient<JsonFileProductService>();
-
             //services.AddDbContext<DbContext>(options =>
             //options.UseSqlServer(@"Server=.;Database=MTG_Mvc;User=sa;Password=change_this_password;"));
             services.AddDbContext<SqlDbContext>();

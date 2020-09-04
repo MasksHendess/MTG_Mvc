@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MTG_Mvc.Migrations
 {
     [DbContext(typeof(SqlDbContext))]
-    [Migration("20200829204220_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20200904215423_MainBoard_SideBoard")]
+    partial class MainBoard_SideBoard
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -20,15 +20,21 @@ namespace MTG_Mvc.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-            modelBuilder.Entity("MTG_Mvc.Models.card", b =>
+            modelBuilder.Entity("MTG_Mvc.Domain.Entities.card", b =>
                 {
                     b.Property<int>("id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("decklistid")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("decklistid")
+                        .HasColumnType("int");
+
+                    b.Property<string>("imageUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("isMainBoard")
+                        .HasColumnType("bit");
 
                     b.Property<string>("name")
                         .HasColumnType("nvarchar(max)");
@@ -43,24 +49,31 @@ namespace MTG_Mvc.Migrations
 
                     b.HasIndex("decklistid");
 
-                    b.ToTable("card");
+                    b.ToTable("cards");
                 });
 
-            modelBuilder.Entity("MTG_Mvc.Models.decklist", b =>
+            modelBuilder.Entity("MTG_Mvc.Domain.Entities.decklist", b =>
                 {
-                    b.Property<string>("id")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("deckName")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("id");
 
                     b.ToTable("decklists");
                 });
 
-            modelBuilder.Entity("MTG_Mvc.Models.card", b =>
+            modelBuilder.Entity("MTG_Mvc.Domain.Entities.card", b =>
                 {
-                    b.HasOne("MTG_Mvc.Models.decklist", null)
+                    b.HasOne("MTG_Mvc.Domain.Entities.decklist", "decklist")
                         .WithMany("cards")
-                        .HasForeignKey("decklistid");
+                        .HasForeignKey("decklistid")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

@@ -3,25 +3,4 @@
     ViewData["Title"] = "decklistView";
 }
 
-@{
-    int Cards = 0;
-    foreach (var item in Model.decklist)
-    {
-
-        Cards += item.quantity;
-    }
-}
-<div class="text-center">
-    <h1 class="display-4">Decklist</h1>
-    <Row>
-        <ul style="list-style-type:none" class="col-lg-3">
-            Cards: @Cards
-            @foreach (var card in Model.decklist)
-            {
-                <li id="@card.name" data-toggle="tooltip" title="<img src='@card.imageUrl' >" data-placement="right">
-                    @card.quantity x  @card.name
-                </li>
-            }
-        </ul>
-    </Row>
 </div>*@

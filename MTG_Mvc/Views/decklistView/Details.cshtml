@@ -1,0 +1,47 @@
+﻿@model MTG_Mvc.Domain.Entities.decklist
+
+@{
+    ViewData["Title"] = "Details";
+}
+@{
+    int Cards = 0;
+    foreach (var item in Model.cards)
+    {
+        if(item.isMainBoard)
+        Cards += item.quantity;
+    }
+}
+<div class="text-center">
+    <Row>
+        <div style="text-align:left;" class="col-lg-4">
+            <ul style="list-style-type:none;">
+                <li><h2>@Model.deckName</h2></li>
+                <li><p>Cards: @Cards</p></li>
+                <li><b>Mainboard</b></li>
+                @foreach (var card in Model.cards)
+                {
+                    @if (card.isMainBoard)
+                    {
+                        <li id="@card.name" data-toggle="tooltip" title="<img src='@card.imageUrl' >" data-placement="right">
+                            @card.quantity x  @card.name
+                        </li>
+                    }
+                }
+                <li><b>Sideboard</b></li>
+                @foreach (var card in Model.cards)
+                {
+                    @if (!card.isMainBoard)
+                    {
+                        <li id="@card.name" data-toggle="tooltip" title="<img src='@card.imageUrl' >" data-placement="right">
+                            @card.quantity x  @card.name
+                        </li>
+                    }
+                }
+                <li>
+                    <a asp-action="Edit" asp-route-id="@Model.id">Edit</a> |
+                    <a asp-action="Index">Back to List</a>
+                </li>
+            </ul>
+        </div>
+    </Row>
+</div>

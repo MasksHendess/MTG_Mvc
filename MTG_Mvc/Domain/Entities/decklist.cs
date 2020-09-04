@@ -14,9 +14,7 @@ namespace MTG_Mvc.Domain.Entities
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int id { get; set; }
-
         public string deckName { get; set; }
         public List<card> cards { get; set; } = new List<card>();
-        
     }
 }

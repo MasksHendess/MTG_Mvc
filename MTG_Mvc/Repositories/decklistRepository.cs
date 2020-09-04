@@ -18,12 +18,24 @@ namespace MTG_Mvc.Repositories
 
         public async Task<IEnumerable<decklist>> GetAllDeckListsAsync()
         {
-            return await dbContext.decklists.ToListAsync();
+           // var cards = dbContext.cards.ToList();
+            var decks = await dbContext.decklists.ToListAsync();
+            foreach (var item in decks)
+            {
+                var cards = dbContext.cards.Where(x => x.decklistid == item.id).ToList();
+                item.cards = cards;
+            }
+            return decks;
         }
         public async Task<decklist> GetDeckListByIdAsync(int id)
         {
-            // var result = dbContext.cards.Where(x => x.decklistid == id).ToList();
-            return await dbContext.decklists.FirstOrDefaultAsync(x => x.id == id); ;
+            var cards = dbContext.cards.Where(x => x.decklistid == id).ToList();
+            var deck = await dbContext.decklists.FirstOrDefaultAsync(x => x.id == id);
+            if(deck!= null)
+            { 
+            deck.cards = cards;
+            }
+            return deck;
         }
         public void Delete(decklist decklist)
         {
@@ -34,6 +46,12 @@ namespace MTG_Mvc.Repositories
         public void Post(decklist decklist)
         {
             dbContext.decklists.Add(decklist);
+            dbContext.SaveChanges();
+        }
+
+        public void Update(decklist decklist)
+        {
+            dbContext.decklists.Update(decklist);
             dbContext.SaveChanges();
         }
     }

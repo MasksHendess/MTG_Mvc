@@ -46,13 +46,33 @@ namespace MTG_Mvc.Services
             decklistRepository.Delete(decklist);
             return decklist;
         }
+
+        public async Task<decklist> UpdateDeckListAsync(decklist decklist)
+        {
+             decklistRepository.Update(decklist);
+            return await decklistRepository.GetDeckListByIdAsync(decklist.id);
+        }
+
+        private bool checkIfCardIsSideboardCard(string line)
+        {
+            if (line == "Sideboard\r")
+            {
+                return true;
+            }
+            else
+                return false;
+        }
         public decklist PostDeckList(string Decklist)
         {
             string[] splitRequestBody = Decklist.Split("\n");
             decklist NewDeck = new decklist();
 
+            bool isSideBoardCard = false;
             foreach (var line in splitRequestBody)
             {
+                if(!isSideBoardCard)
+                    isSideBoardCard = checkIfCardIsSideboardCard(line);
+               
                 if (line != "Deck\r" && line != "Sideboard\r" && line !="Commander\r" && line !="\r")
                 {
                     card NewCard = new card();
@@ -76,15 +96,15 @@ namespace MTG_Mvc.Services
                         }
                         i++;
                     }
-                        NewDeck.cards.Add(NewCard);
+                   NewCard.isMainBoard = !isSideBoardCard;
+                   NewDeck.cards.Add(NewCard);
                 }
             }
 
             if (NewDeck != null)
             {
+                NewDeck.deckName = "Default Deck Name";
                decklistRepository.Post(NewDeck);
-                //dbContext.decklists.Add(NewDeck);
-                //dbContext.SaveChanges();
             }
             return NewDeck;
         }
