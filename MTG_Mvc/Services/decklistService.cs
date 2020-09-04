@@ -22,9 +22,9 @@ namespace MTG_Mvc.Services
     public class decklistService : IdecklistServiceInterface
     {
        // private readonly SqlDbContext dbContext;
-        private readonly decklistRepository decklistRepository;
+        private readonly IdecklistRepositoryInterface decklistRepository;
         public IWebHostEnvironment WebHostEnvironment { get; }
-        public decklistService(IWebHostEnvironment webHostEnvironment, decklistRepository DecklistRepository)
+        public decklistService(IWebHostEnvironment webHostEnvironment, IdecklistRepositoryInterface DecklistRepository)
         {
             WebHostEnvironment = webHostEnvironment;
             decklistRepository = DecklistRepository;
@@ -53,7 +53,7 @@ namespace MTG_Mvc.Services
 
             foreach (var line in splitRequestBody)
             {
-                if (line != "Deck\r")
+                if (line != "Deck\r" && line != "Sideboard\r" && line !="Commander\r" && line !="\r")
                 {
                     card NewCard = new card();
 
@@ -82,7 +82,7 @@ namespace MTG_Mvc.Services
 
             if (NewDeck != null)
             {
-                decklistRepository.Post(NewDeck);
+               decklistRepository.Post(NewDeck);
                 //dbContext.decklists.Add(NewDeck);
                 //dbContext.SaveChanges();
             }

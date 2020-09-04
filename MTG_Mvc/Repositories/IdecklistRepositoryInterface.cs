@@ -13,6 +13,8 @@ namespace MTG_Mvc.Repositories
         Task<decklist> GetDeckListByIdAsync(int id);
 
         void Delete(decklist decklist);
+
+        void Post(decklist decklist);
         
     }
 }
