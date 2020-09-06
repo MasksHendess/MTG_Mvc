@@ -7,9 +7,13 @@
     int Cards = 0;
     foreach (var item in Model.cards)
     {
-        if(item.isMainBoard)
-        Cards += item.quantity;
+        if (item.isMainBoard)
+            Cards += item.quantity;
     }
+}
+@section Scripts
+{
+    <script src="~/js/decklistViewDetails.js" > </script>
 }
 <div class="text-center">
     <Row>
