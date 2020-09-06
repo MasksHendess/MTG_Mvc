@@ -28,9 +28,9 @@ namespace MTG_Mvc.APIControllers
         }
 
         [HttpGet]
-        public ActionResult<List<Card>> GetDecklists()
+        public async Task<ActionResult<List<Card>>> GetDecklists()
         {
-            var cards = dbContext.cards.Where(x => x.decklistid == 3).ToList();
+            var cards = dbContext.cards.Where(x => x.decklistid == 4).ToList();
            // var decklist = dbContext.decklists.FirstOrDefault();
             
             CardService service = new CardService();
@@ -38,7 +38,7 @@ namespace MTG_Mvc.APIControllers
             List<Card> value = new List<Card>();
             foreach (var item in cards)
             {
-                 result =(service.Where(x => x.Name, item.name).All()); // can get multiple cards (up to 100?) 
+                 result = await (service.Where(x => x.Name, item.name).AllAsync()); // Spam that API!
                 if (result.IsSuccess)
                 {
                     foreach (var card in result.Value)

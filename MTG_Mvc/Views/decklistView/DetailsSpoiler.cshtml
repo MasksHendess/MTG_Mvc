@@ -1,0 +1,43 @@
+﻿@model MTG_Mvc.Domain.Entities.decklist
+
+@{
+    ViewData["Title"] = "Details";
+}
+<div class="text-center">
+    <h2 class="display-4">Spoiler View</h2>
+</div>
+<div>
+    <h2>Deckname: @Model.deckName</h2>
+</div>
+<b>Mainboard</b>
+<div class="row">
+    @foreach (var card in Model.cards)
+    {
+        for (int i = 0; i < card.quantity; i++)
+        {
+            if (card.isMainBoard)
+            {
+                <div class="card col-lg-3">
+                    <img class="card-img" src="@card.imageUrl">
+
+                </div>
+            }
+        }
+    }
+</div>
+<b>Sideboard</b>
+<div class="row">
+    @foreach (var card in Model.cards)
+    {
+        for (int i = 0; i < card.quantity; i++)
+        {
+            if (!card.isMainBoard)
+            {
+                <div class="card col-lg-3">
+                    <img class="card-img" src="@card.imageUrl">
+
+                </div>
+            }
+        }
+    }
+</div>

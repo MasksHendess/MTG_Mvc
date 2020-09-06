@@ -44,6 +44,22 @@ namespace MTG_Mvc.Controllers
             return View(decklist);
         }
 
+        // GET:decklistView/Details/5
+        public async Task<IActionResult> DetailsSpoiler(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+            var decklist = await IdecklistService.GetDeckListByIdAsync(Convert.ToInt32(id));
+
+            if (decklist == null)
+            {
+                return NotFound();
+            }
+            return View(decklist);
+        }
+
         // GET: decklistView/Create
         public IActionResult Create()
         {
