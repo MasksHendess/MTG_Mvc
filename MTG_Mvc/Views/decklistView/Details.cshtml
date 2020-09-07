@@ -7,9 +7,13 @@
     int Cards = 0;
     foreach (var item in Model.cards)
     {
-        if(item.isMainBoard)
-        Cards += item.quantity;
+        if (item.isMainBoard)
+            Cards += item.quantity;
     }
+}
+@section Scripts
+{
+    <script src="~/js/decklistViewDetails.js" > </script>
 }
 <div class="text-center">
     <Row>
@@ -22,9 +26,12 @@
                 {
                     @if (card.isMainBoard)
                     {
-                        <li id="@card.name" data-toggle="tooltip" title="<img src='@card.imageUrl' >" data-placement="right">
-                            @card.quantity x  @card.name
-                        </li>
+            <li id="@card.name" data-toggle="tooltip" title="<img src='@card.imageUrl' >" data-placement="right">
+
+                <a  style="color: black" asp-area="" asp-controller="cardView" asp-action="Details" asp-route-id="@card.id">
+                    @card.quantity x @card.name
+                </a>
+            </li>
                     }
                 }
                 <li><b>Sideboard</b></li>
@@ -32,15 +39,18 @@
                 {
                     @if (!card.isMainBoard)
                     {
-                        <li id="@card.name" data-toggle="tooltip" title="<img src='@card.imageUrl' >" data-placement="right">
-                            @card.quantity x  @card.name
-                        </li>
+            <li id="@card.name" data-toggle="tooltip" title="<img src='@card.imageUrl' >" data-placement="right">
+                <a style="color: black" asp-area="" asp-controller="cardView" asp-action="Details" asp-route-id="@card.id">
+                    @card.quantity x @card.name
+                </a>
+            </li>
                     }
                 }
-                <li>
-                    <a asp-action="Edit" asp-route-id="@Model.id">Edit</a> |
+            <li>
+                    <a asp-action="Edit" asp-route-id="@Model.id">Edit</a>|
+                    <a asp-action="DetailsSpoiler" asp-route-id="@Model.id">Spoilerview</a>|
                     <a asp-action="Index">Back to List</a>
-                </li>
+            </li>
             </ul>
         </div>
     </Row>

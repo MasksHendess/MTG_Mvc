@@ -42,7 +42,13 @@ namespace MTG_Mvc.APIControllers
         {
             var reader = new StreamReader(HttpContext.Request.Body);
             string requestBody = await reader.ReadToEndAsync();
-            var NewDeck = decklistService.PostDeckList(requestBody);
+
+            var cardsInDeck = decklistService.convertRequestBodyToCardList(requestBody);
+            cardsInDeck = await decklistService.fetchCardInformationFromAPI(cardsInDeck);
+            var NewDeck = decklistService.CreateNewDeckListFromTXTAsync(cardsInDeck);
+            //got some JSON serilizationError when line 46-47 was called from CreateNewDeckListTXTAsync. 
+            //put those lines here for now. The call works, but line 46 & 47 should be called from CreateNewDeckListTXTASync.
+            // Investigate how to fix that issue
             return Ok(NewDeck); 
         }
 

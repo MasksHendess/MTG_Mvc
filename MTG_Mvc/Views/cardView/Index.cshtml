@@ -1,0 +1,17 @@
+﻿@model IEnumerable<MTG_Mvc.Domain.Entities.card>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+<div class=" row">
+    @foreach (var card in @Model)
+    {
+        <div class="card col-lg-3">
+            <a asp-action="Details" asp-route-id="@card.id">
+                <img class="card-img" src="@card.imageUrl">
+            </a>
+        </div>
+    }
+</div>

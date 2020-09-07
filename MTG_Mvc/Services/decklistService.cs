@@ -16,18 +16,23 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using MTG_Mvc.Repositories;
+using MtgApiManager.Lib.Model;
+using System.Security.Policy;
+using MTG_Mvc.APIControllers;
 
 namespace MTG_Mvc.Services
 {
     public class decklistService : IdecklistServiceInterface
     {
-       // private readonly SqlDbContext dbContext;
         private readonly IdecklistRepositoryInterface decklistRepository;
+        private readonly mtgioAPIController mtgioAPIController;
+
         public IWebHostEnvironment WebHostEnvironment { get; }
-        public decklistService(IWebHostEnvironment webHostEnvironment, IdecklistRepositoryInterface DecklistRepository)
+        public decklistService(IWebHostEnvironment webHostEnvironment, IdecklistRepositoryInterface DecklistRepository, mtgioAPIController _mtgioAPIController)
         {
             WebHostEnvironment = webHostEnvironment;
             decklistRepository = DecklistRepository;
+            mtgioAPIController = _mtgioAPIController;
         }
 
         public async Task<IEnumerable<decklist>> GetAllDeckListsAsync()
@@ -49,8 +54,20 @@ namespace MTG_Mvc.Services
 
         public async Task<decklist> UpdateDeckListAsync(decklist decklist)
         {
-             decklistRepository.Update(decklist);
+            decklistRepository.Update(decklist);
             return await decklistRepository.GetDeckListByIdAsync(decklist.id);
+        }
+        public async Task<decklist> CreateNewDeckListFromTXTAsync(List<card> cardsInDeck)
+        {
+            decklist NewDeck = new decklist();
+
+            if (cardsInDeck != null)
+            {
+                NewDeck.deckName = "Default Deck Name";
+                NewDeck.cards = cardsInDeck;
+                decklistRepository.Post(NewDeck);
+            }
+            return NewDeck;
         }
 
         private bool checkIfCardIsSideboardCard(string line)
@@ -62,33 +79,58 @@ namespace MTG_Mvc.Services
             else
                 return false;
         }
-        public decklist PostDeckList(string Decklist)
+        public async Task<List<card>> fetchCardInformationFromAPI(List<card> cardList)
         {
+            var deckList = new List<MtgApiManager.Lib.Model.Card>();
+            foreach (var card in cardList)
+            {
+                deckList = await mtgioAPIController.getCardbyCardName(card.name);
+                if(deckList != null && deckList.Count > 0)
+                { 
+                card.imageUrl = deckList.FirstOrDefault().ImageUrl;
+                card.set = deckList.FirstOrDefault().Set;
+                card.artist = deckList.FirstOrDefault().Artist;
+                card.cmc = Convert.ToDecimal(deckList.FirstOrDefault().Cmc);
+                card.flavourText = deckList.FirstOrDefault().Flavor;
+                card.rarity = deckList.FirstOrDefault().Rarity;
+                card.type = deckList.FirstOrDefault().Type;
+                card.text = deckList.FirstOrDefault().Text;
+                }
+            }
+
+            return cardList;
+        }
+        public List<card> convertRequestBodyToCardList(string Decklist)
+        {
+            List<card> result = new List<card>();
             string[] splitRequestBody = Decklist.Split("\n");
-            decklist NewDeck = new decklist();
 
             bool isSideBoardCard = false;
             foreach (var line in splitRequestBody)
             {
-                if(!isSideBoardCard)
+                if (!isSideBoardCard)
                     isSideBoardCard = checkIfCardIsSideboardCard(line);
-               
-                if (line != "Deck\r" && line != "Sideboard\r" && line !="Commander\r" && line !="\r")
-                {
-                    card NewCard = new card();
 
+                if (line != "Deck\r" && line != "Sideboard\r" && line != "Commander\r" && line != "\r")
+                {
                     string[] splitLine = line.Split(" ");               // [0]20    [1]Mountain    [2](IKO)
-                    // This works great except that cardnames can contain whitespaces 
-                    NewCard.quantity = Convert.ToInt32(splitLine[0]);
+                                                                        // This works great except that cardnames can contain whitespaces 
 
                     string name = "";
                     int i = 0;
                     foreach (var item in splitLine)
                     {
+
                         if (item.Contains("("))
                         {
-                            NewCard.set = item;
-                            NewCard.name = name.Substring(0, name.Length - 1);
+                            //NewCard.set = item;
+                            name = name.Substring(0, name.Length - 1);
+                            card NewCard = new card();
+                            NewCard.name = name;
+                            NewCard.quantity = Convert.ToInt32(splitLine[0]);
+                            NewCard.isMainBoard = !isSideBoardCard;
+                            result.Add(NewCard);
+
                         }
                         if (i > 0) // item 0 is not part of name
                         {
@@ -96,18 +138,9 @@ namespace MTG_Mvc.Services
                         }
                         i++;
                     }
-                   NewCard.isMainBoard = !isSideBoardCard;
-                   NewDeck.cards.Add(NewCard);
                 }
             }
-
-            if (NewDeck != null)
-            {
-                NewDeck.deckName = "Default Deck Name";
-               decklistRepository.Post(NewDeck);
-            }
-            return NewDeck;
+            return result;
         }
-
     }
 }

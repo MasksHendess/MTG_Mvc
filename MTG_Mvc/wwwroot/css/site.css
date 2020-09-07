@@ -5,52 +5,49 @@
 .fa-star {
     cursor: pointer;
 }
-
+/*
 .card-columns .card:hover .card-img {
     opacity: 1;
     -webkit-transform-style: preserve-3d;
 }
 
 .card-columns .card-body {
-    height: 100px;
-    font-family: 'Nunito', sans-serif;
+    height: 200px;
     background: #fbfafd;
-}
+}*/
 
-.card-columns .card-img {
-    height: 330px;
+.row .card-img {
+    height: 100%;
+    width: 100%;
     vertical-align: bottom;
-    background-position: center; /* Center the image */
-    background-repeat: no-repeat; /* Do not repeat the image */
-    background-size: cover; /* Resize the background image to cover the entire container */
+    background-position: center;
+    background-repeat: no-repeat;   
+    background-size: cover;
     opacity: .8;
 }
 
-.modal .card-img {
-    height: 500px;
-    vertical-align: bottom;
-    background-position: center; /* Center the image */
-    background-repeat: no-repeat; /* Do not repeat the image */
-    background-size: cover; /* Resize the background image to cover the entire container */
+.card {
+    border: none;
+    margin-bottom: 2%;
 }
 
-.card-columns .card:hover {
+/*.card-columns .card:hover {
     transform: scale(1.05);
     box-shadow: 0 10px 20px rgba(37,33,82,.12), 0 4px 8px rgba(37,33,82,.06);
-}
+}*/
 
 .card-footer {
     background: #fbfafd;
 }
 
 
-a.navbar-brand {
+/*a.navbar-brand {
     white-space: normal;
     font-family: 'Yellowtail', cursive;
     font-size: xx-large;
     text-align: center;
     word-break: break-all;
-}
+}*/
 
 /* Provide sufficient contrast against white background */
 a {
@@ -116,7 +113,7 @@ body {
     margin-bottom: 60px;
 }
 
-p {
+/*p {
     font-family: 'Nunito', sans-serif;
 }
 
@@ -127,7 +124,7 @@ h1 {
 ul {
     font-family: 'Nunito', sans-serif;
 }
-
+*/
 .footer {
     position: absolute;
     bottom: 0;
