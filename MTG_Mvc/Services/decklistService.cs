@@ -85,8 +85,17 @@ namespace MTG_Mvc.Services
             foreach (var card in cardList)
             {
                 deckList = await mtgioAPIController.getCardbyCardName(card.name);
+                if(deckList != null && deckList.Count > 0)
+                { 
                 card.imageUrl = deckList.FirstOrDefault().ImageUrl;
                 card.set = deckList.FirstOrDefault().Set;
+                card.artist = deckList.FirstOrDefault().Artist;
+                card.cmc = Convert.ToDecimal(deckList.FirstOrDefault().Cmc);
+                card.flavourText = deckList.FirstOrDefault().Flavor;
+                card.rarity = deckList.FirstOrDefault().Rarity;
+                card.type = deckList.FirstOrDefault().Type;
+                card.text = deckList.FirstOrDefault().Text;
+                }
             }
 
             return cardList;
