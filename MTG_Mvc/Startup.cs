@@ -1,20 +1,14 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text.Json;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using MTG_Mvc.DBContext;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using MTG_Mvc.APIControllers;
+using MTG_Mvc.DBContext;
 using MTG_Mvc.Domain.Entities;
-using MTG_Mvc.Services;
 using MTG_Mvc.Repositories;
+using MTG_Mvc.Services;
 
 namespace MTG_Mvc
 {
@@ -30,16 +24,22 @@ namespace MTG_Mvc
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddMemoryCache();
             services.AddRazorPages();
-            services.AddControllers();
+            services.AddControllersWithViews().AddNewtonsoftJson(options =>
+            options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+
             services.AddTransient<JsonFileProductService>();
             services.AddDbContext<SqlDbContext>(x => x.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             services.AddScoped<decklist>();
             services.AddScoped<decklistService>(); 
             services.AddScoped<decklistRepository>();
+            services.AddScoped<mtgioAPIController>();
+
             services.AddScoped(typeof(IdecklistServiceInterface), typeof(decklistService));
+
             services.AddScoped(typeof(IdecklistRepositoryInterface), typeof(decklistRepository));
-           
+
             services.AddMvc();
         }
 

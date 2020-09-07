@@ -14,6 +14,9 @@ using Newtonsoft.Json;
 using MtgApiManager.Lib.Service;
 using MtgApiManager.Lib.Core;
 using MtgApiManager.Lib.Model;
+using System.Text.Json;
+using MTG_Mvc.Repositories;
+using Microsoft.Extensions.FileProviders;
 
 namespace MTG_Mvc.APIControllers
 {
@@ -26,13 +29,32 @@ namespace MTG_Mvc.APIControllers
         {
             dbContext = _dbContext;
         }
-
         [HttpGet]
-        public async Task<ActionResult<List<Card>>> GetDecklists()
+        [Route("test/{cardName}")]
+        public async Task<List<Card>> getCardbyCardName(string cardName)
+            {
+                CardService service = new CardService();
+                //Exceptional<List<Card>> result = new Exceptional<List<Card>>();
+                List<Card> value = new List<Card>();
+                var result = await service.Where(x => x.Name, cardName).AllAsync();
+                if (result.IsSuccess)
+                {
+                    foreach (var card in result.Value)
+                    {
+                        value.Add(card); //= result.Value;
+                    }
+                }
+                else
+                {
+                    var exception = result.Exception;
+                }
+                return value;
+            }
+        [HttpGet]
+        [Route("{id}")]
+        public async Task<ActionResult<List<Card>>> GetCardsFromAPI(int id)
         {
-            var cards = dbContext.cards.Where(x => x.decklistid == 4).ToList();
-           // var decklist = dbContext.decklists.FirstOrDefault();
-            
+            var cards = dbContext.cards.Where(x => x.decklistid == id).ToList();
             CardService service = new CardService();
             Exceptional<List<Card>> result = new Exceptional<List<Card>>();
             List<Card> value = new List<Card>();
@@ -52,18 +74,13 @@ namespace MTG_Mvc.APIControllers
                 }
             }
 
-            foreach (var wigga in cards)
+            foreach (var card in cards)
             {
-                var dude = value.Where(x => x.Name == wigga.name);
-                wigga.imageUrl = dude.FirstOrDefault().ImageUrl;
-                dbContext.cards.Update(wigga);
+                var matchingCards = value.Where(x => x.Name == card.name);
+                card.imageUrl = matchingCards.FirstOrDefault().ImageUrl;
+                dbContext.cards.Update(card);
                 dbContext.SaveChanges();
             }
-            // Exceptional<List<Card>> result = service.All(); 
-            // var result = service.Where(x => x.Name, "Viashino Pyromancer").All();
-          
-            
-            
             return Ok(value);
         }
 
