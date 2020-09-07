@@ -31,10 +31,6 @@
     margin-bottom: 2%;
 }
 
-/*.card-columns .card:hover {
-    transform: scale(1.05);
-    box-shadow: 0 10px 20px rgba(37,33,82,.12), 0 4px 8px rgba(37,33,82,.06);
-}*/
 
 .card-footer {
     background: #fbfafd;
@@ -51,7 +47,7 @@
 
 /* Provide sufficient contrast against white background */
 a {
-    color: #0366d6;
+    color: rgb(228, 228, 228);
 }
 
 .btn-primary {
@@ -74,10 +70,6 @@ a {
 
 /* Sticky footer styles
 -------------------------------------------------- */
-html {
-    font-size: 14px;
-}
-
 @media (min-width: 768px) {
     html {
         font-size: 16px;
@@ -147,4 +139,3 @@ ul {
     background: -moz-linear-gradient(110deg, #252152 60%, #e9a8a6 60%);
     background: linear-gradient(110deg, #252152 60%, #e9a8a6 60%);
 }
-© 2020 GitHub, Inc.

@@ -28,7 +28,7 @@
                     {
             <li id="@card.name" data-toggle="tooltip" title="<img src='@card.imageUrl' >" data-placement="right">
 
-                <a  style="color: black" asp-area="" asp-controller="cardView" asp-action="Details" asp-route-id="@card.id">
+                <a  class="text-white" asp-area="" asp-controller="cardView" asp-action="Details" asp-route-id="@card.id">
                     @card.quantity x @card.name
                 </a>
             </li>
@@ -40,7 +40,7 @@
                     @if (!card.isMainBoard)
                     {
             <li id="@card.name" data-toggle="tooltip" title="<img src='@card.imageUrl' >" data-placement="right">
-                <a style="color: black" asp-area="" asp-controller="cardView" asp-action="Details" asp-route-id="@card.id">
+                <a class="text-white" asp-area="" asp-controller="cardView" asp-action="Details" asp-route-id="@card.id">
                     @card.quantity x @card.name
                 </a>
             </li>
