@@ -18,7 +18,15 @@ namespace MTG_Mvc.Domain.Entities
         public string name{ get; set; }
         public string set { get; set; }
         public Uri imageUrl { get; set; }
+        public string artist { get; set; }
+        [Column(TypeName = "decimal(18,2)")]
+        public decimal cmc { get; set; }
+        public string flavourText { get; set; }
         public bool isMainBoard { get; set; }
+        public string text { get; set; }
+        public string type { get; set; }
+
+        public  string rarity { get; set; }
 
         [ForeignKey("decklist")]
         public int decklistid { get; set; }
