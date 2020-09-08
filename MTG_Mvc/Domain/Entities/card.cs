@@ -23,12 +23,12 @@ namespace MTG_Mvc.Domain.Entities
         public decimal cmc { get; set; }
         public string manaCost { get; set; }
         public string flavourText { get; set; }
-        public bool isMainBoard { get; set; }
         public string text { get; set; }
         public string type { get; set; }
-
         public  string rarity { get; set; }
-
+        public string power { get; set; }
+        public string toughness { get; set; }
+        public bool isMainBoard { get; set; }
         [ForeignKey("decklist")]
         public int decklistid { get; set; }
 

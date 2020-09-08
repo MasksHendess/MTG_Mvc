@@ -24,6 +24,10 @@
             <p>
                 <i>  @Model.flavourText </i>
             </p>
+            @if(Model.power!= null && Model.toughness !=null)
+            {
+                <p>@Model.power / @Model.toughness</p>
+            }
             <p>Artist: @Model.artist </p>
             <a asp-controller="decklistView" asp-action="Details" asp-route-id="@Model.decklistid">
                 To Deck
