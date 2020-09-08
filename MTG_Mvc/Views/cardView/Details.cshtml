@@ -10,7 +10,7 @@
             <img src="@Model.imageUrl" />
         </div>
         <div class="col-lg-3">
-            @Model.name  @Model.cmc
+            @Model.name  @Model.manaCost
 
 
             <p>
@@ -25,10 +25,13 @@
                 <i>  @Model.flavourText </i>
             </p>
             <p>Artist: @Model.artist </p>
+            <a asp-controller="decklistView" asp-action="Details" asp-route-id="@Model.decklistid">
+                To Deck
+            </a>|
             <a asp-action="Index">
                 Back
             </a>
         </div>
-       
+
     </div>
 </div>
