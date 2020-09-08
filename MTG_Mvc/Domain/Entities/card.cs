@@ -21,6 +21,7 @@ namespace MTG_Mvc.Domain.Entities
         public string artist { get; set; }
         [Column(TypeName = "decimal(18,2)")]
         public decimal cmc { get; set; }
+        public string manaCost { get; set; }
         public string flavourText { get; set; }
         public bool isMainBoard { get; set; }
         public string text { get; set; }

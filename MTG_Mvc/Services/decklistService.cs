@@ -84,13 +84,14 @@ namespace MTG_Mvc.Services
             var deckList = new List<MtgApiManager.Lib.Model.Card>();
             foreach (var card in cardList)
             {
-                deckList = await mtgioAPIController.getCardbyCardName(card.name);
+                deckList = await mtgioAPIController.getCardbyCardName(card.name, card.set);
                 if(deckList != null && deckList.Count > 0)
                 { 
                 card.imageUrl = deckList.FirstOrDefault().ImageUrl;
                 card.set = deckList.FirstOrDefault().Set;
                 card.artist = deckList.FirstOrDefault().Artist;
-                card.cmc = Convert.ToDecimal(deckList.FirstOrDefault().Cmc);
+                card.cmc = Convert.ToDecimal(deckList.FirstOrDefault().Cmc); // Mana Cost number
+                card.manaCost = deckList.FirstOrDefault().ManaCost; // Mana Cost string {1}{R}
                 card.flavourText = deckList.FirstOrDefault().Flavor;
                 card.rarity = deckList.FirstOrDefault().Rarity;
                 card.type = deckList.FirstOrDefault().Type;
@@ -123,10 +124,10 @@ namespace MTG_Mvc.Services
 
                         if (item.Contains("("))
                         {
-                            //NewCard.set = item;
                             name = name.Substring(0, name.Length - 1);
                             card NewCard = new card();
-                            NewCard.name = name;
+                            NewCard.name = name; 
+                            NewCard.set = item;
                             NewCard.quantity = Convert.ToInt32(splitLine[0]);
                             NewCard.isMainBoard = !isSideBoardCard;
                             result.Add(NewCard);

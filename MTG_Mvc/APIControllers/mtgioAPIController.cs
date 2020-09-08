@@ -31,25 +31,47 @@ namespace MTG_Mvc.APIControllers
         }
         [HttpGet]
         [Route("test/{cardName}")]
-        public async Task<List<Card>> getCardbyCardName(string cardName)
+        public async Task<List<Card>> getCardbyCardName(string cardName, string cardSet)
+        {
+            CardService service = new CardService();
+            //Exceptional<List<Card>> result = new Exceptional<List<Card>>();
+            List<Card> value = new List<Card>();
+            Exceptional<List<Card>> result = new Exceptional<List<Card>>();
+            if (cardName.Contains("/")) // Cards that contain / are split cards or aftermath cards
             {
-                CardService service = new CardService();
-                //Exceptional<List<Card>> result = new Exceptional<List<Card>>();
-                List<Card> value = new List<Card>();
-                var result = await service.Where(x => x.Name, cardName).AllAsync();
-                if (result.IsSuccess)
+                var splitcard = cardName.Split(" ");
+                // cardName = cardName.Substring(0, cardName.IndexOf("/"));
+                if (cardSet == "(AKR)" || cardSet == "(AKH)" || cardSet == "(HOU)")
                 {
-                    foreach (var card in result.Value)
-                    {
-                        value.Add(card); //= result.Value;
-                    }
+                    // Amonkhet Remastered, Amonkhet, Hour of Devestation 
+                    // The only sets that contains all unique aftermath cards (some reprits exist in some commander product)
+
+                    result = await service.Where(x => x.Name, splitcard[0]).Where(x => x.Layout, "aftermath").AllAsync();
+                 //   var resultB = await service.Where(x => x.Name, splitcard[2]).Where(x => x.Layout, "aftermath").AllAsync();
                 }
                 else
                 {
-                    var exception = result.Exception;
+                    result = await service.Where(x => x.Name, splitcard[0]).Where(x => x.Layout, "split").AllAsync();
                 }
-                return value;
             }
+            else
+            {
+                result = await service.Where(x => x.Name, cardName).AllAsync();
+            }
+
+            if (result.IsSuccess)
+            {
+                foreach (var card in result.Value)
+                {
+                    value.Add(card); //= result.Value;
+                }
+            }
+            else
+            {
+                var exception = result.Exception;
+            }
+            return value;
+        }
         [HttpGet]
         [Route("{id}")]
         public async Task<ActionResult<List<Card>>> GetCardsFromAPI(int id)
@@ -60,7 +82,7 @@ namespace MTG_Mvc.APIControllers
             List<Card> value = new List<Card>();
             foreach (var item in cards)
             {
-                 result = await (service.Where(x => x.Name, item.name).AllAsync()); // Spam that API!
+                result = await (service.Where(x => x.Name, item.name).AllAsync()); // Spam that API!
                 if (result.IsSuccess)
                 {
                     foreach (var card in result.Value)
