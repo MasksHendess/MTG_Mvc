@@ -15,6 +15,13 @@ namespace MTG_Mvc.Domain.Entities
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int id { get; set; }
         public string deckName { get; set; }
+        public int cardsAmount { get; set; }
+        public int creaturesAmount { get; set; }
+        public int sorceriesAmount { get; set; }
+        public int instantsAmount { get; set; }
+        public int landsAmount { get; set; }
+
+        public int avarageCMC { get; set; }
         public List<card> cards { get; set; } = new List<card>();
     }
 }

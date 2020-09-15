@@ -24,17 +24,21 @@ namespace MTG_Mvc.Services
 {
     public class decklistService : IdecklistServiceInterface
     {
+        #region properties
         private readonly IdecklistRepositoryInterface decklistRepository;
         private readonly mtgioAPIController mtgioAPIController;
-
+        #endregion
+        #region constructor
         public IWebHostEnvironment WebHostEnvironment { get; }
-        public decklistService(IWebHostEnvironment webHostEnvironment, IdecklistRepositoryInterface DecklistRepository, mtgioAPIController _mtgioAPIController)
+        public decklistService(IWebHostEnvironment webHostEnvironment, IdecklistRepositoryInterface DecklistRepository,
+            mtgioAPIController _mtgioAPIController)
         {
             WebHostEnvironment = webHostEnvironment;
             decklistRepository = DecklistRepository;
             mtgioAPIController = _mtgioAPIController;
         }
-
+        #endregion
+        #region publicFunctions
         public async Task<IEnumerable<decklist>> GetAllDeckListsAsync()
         {
             return await decklistRepository.GetAllDeckListsAsync();
@@ -57,54 +61,59 @@ namespace MTG_Mvc.Services
             decklistRepository.Update(decklist);
             return await decklistRepository.GetDeckListByIdAsync(decklist.id);
         }
-        public async Task<decklist> CreateNewDeckListFromTXTAsync(List<card> cardsInDeck)
+        public async Task<List<string>> CreateNewDecklist(string requestBody)
         {
-            decklist NewDeck = new decklist();
+            decklist deckList = new decklist();
 
-            if (cardsInDeck != null)
+            try
             {
-                NewDeck.deckName = "Default Deck Name";
-                NewDeck.cards = cardsInDeck;
-                decklistRepository.Post(NewDeck);
-            }
-            return NewDeck;
-        }
+                deckList.deckName = "Default Deck Name";
 
-        private bool checkIfCardIsSideboardCard(string line)
-        {
-            if (line == "Sideboard\r")
-            {
-                return true;
-            }
-            else
-                return false;
-        }
-        public async Task<List<card>> fetchCardInformationFromAPI(List<card> cardList)
-        {
-            var deckList = new List<MtgApiManager.Lib.Model.Card>();
-            foreach (var card in cardList)
-            {
-                deckList = await mtgioAPIController.getCardbyCardName(card.name, card.set);
-                if (deckList != null && deckList.Count > 0)
+                var requestList = convertRequestToList(requestBody); // name set and quantity isMainboard
+                foreach (var card in requestList)
                 {
-                    var OBJ = deckList.Where(x => x.ImageUrl != null).FirstOrDefault();
-                    card.imageUrl = OBJ.ImageUrl;   //deckList.FirstOrDefault().ImageUrl;
-                    card.artist = OBJ.Artist; //deckList.FirstOrDefault().Artist;
-                    card.set = deckList.FirstOrDefault().Set;
-                    card.cmc = Convert.ToDecimal(deckList.FirstOrDefault().Cmc); // Mana Cost number
-                    card.manaCost = deckList.FirstOrDefault().ManaCost; // Mana Cost string {1}{R}
-                    card.flavourText = deckList.FirstOrDefault().Flavor;
-                    card.rarity = deckList.FirstOrDefault().Rarity;
-                    card.type = deckList.FirstOrDefault().Type;
-                    card.text = deckList.FirstOrDefault().Text;
-                    card.power = deckList.FirstOrDefault().Power;
-                    card.toughness = deckList.FirstOrDefault().Toughness;
+                    var cardInfo = await getCardInfoFromAPI(card.name, card.set);
+                    var newCard = mapCardInfo(card, cardInfo);
+                    deckList.cards.Add(newCard);
                 }
+                deckList = addCardTypeQuantityToDecklist(deckList);
+                saveDecklistToDB(deckList);
+            }
+            catch (Exception e)
+            {
+                throw new Exception("Something went wrong.", e);
             }
 
-            return cardList;
+            List<string> result = deckList.cards.Select(x => x.name).OrderBy(name => name).ToList();
+            return result;
         }
-        public List<card> convertRequestBodyToCardList(string Decklist)
+        #endregion
+        #region privateFunctions
+        private async Task<List<Card>> getCardInfoFromAPI(string cardName, string cardSet)
+        {
+            var result = await mtgioAPIController.getCardbyCardName(cardName, cardSet);
+            return result;
+        }
+
+        private card mapCardInfo(card newCard, List<Card> cards)
+        {
+            var OBJ = cards.Where(x => x.ImageUrl != null).FirstOrDefault();
+            newCard.imageUrl = OBJ.ImageUrl;   //deckList.FirstOrDefault().ImageUrl;
+            newCard.artist = OBJ.Artist; //deckList.FirstOrDefault().Artist;
+
+            newCard.set = cards.FirstOrDefault().Set;
+            newCard.cmc = Convert.ToDecimal(cards.FirstOrDefault().Cmc); // Mana Cost number
+            newCard.manaCost = cards.FirstOrDefault().ManaCost; // Mana Cost string {1}{R}
+            newCard.flavourText = cards.FirstOrDefault().Flavor;
+            newCard.rarity = cards.FirstOrDefault().Rarity;
+            newCard.type = cards.FirstOrDefault().Type;
+            newCard.text = cards.FirstOrDefault().Text;
+            newCard.power = cards.FirstOrDefault().Power;
+            newCard.toughness = cards.FirstOrDefault().Toughness;
+
+            return newCard;
+        }
+        private List<card> convertRequestToList(string Decklist)
         {
             List<card> result = new List<card>();
             string[] splitRequestBody = Decklist.Split("\n");
@@ -146,5 +155,55 @@ namespace MTG_Mvc.Services
             }
             return result;
         }
+
+        private void saveDecklistToDB(decklist decklist)
+        {
+            try
+            {
+                decklistRepository.Post(decklist);
+
+            }
+            catch (Exception e)
+            {
+                throw new Exception("Something went wrong.", e);
+            }
+        }
+
+        private decklist addCardTypeQuantityToDecklist(decklist decklist)
+        {
+            decimal sum = 0;
+            foreach (var card in decklist.cards)
+            {
+                if (card.type.Contains("Land"))
+                    decklist.landsAmount += card.quantity;
+
+                if (card.type.Contains("Instant"))
+                    decklist.instantsAmount += card.quantity;
+
+                if (card.type.Contains("Sorcery"))
+                    decklist.sorceriesAmount += card.quantity;
+
+                if (card.type.Contains("Creature"))
+                    decklist.creaturesAmount += card.quantity;
+
+                if (card.isMainBoard)
+                    decklist.cardsAmount += card.quantity;
+
+                sum += card.cmc;
+            }
+            decklist.avarageCMC = Convert.ToInt32(sum / decklist.cards.Count);
+
+            return decklist;
+        }
+        private bool checkIfCardIsSideboardCard(string line)
+        {
+            if (line == "Sideboard\r")
+            {
+                return true;
+            }
+            else
+                return false;
+        }
+        #endregion
     }
 }
