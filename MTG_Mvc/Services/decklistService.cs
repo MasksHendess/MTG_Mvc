@@ -25,41 +25,43 @@ namespace MTG_Mvc.Services
     public class decklistService : IdecklistServiceInterface
     {
         #region properties
-        private readonly IdecklistRepositoryInterface decklistRepository;
+        private readonly IdecklistRepositoryInterface idecklistRepository;
+        private readonly IcardRepositoryInterface itestRepository;
         private readonly mtgioAPIController mtgioAPIController;
         #endregion
         #region constructor
         public IWebHostEnvironment WebHostEnvironment { get; }
         public decklistService(IWebHostEnvironment webHostEnvironment, IdecklistRepositoryInterface DecklistRepository,
-            mtgioAPIController _mtgioAPIController)
+        IcardRepositoryInterface _itestRepositoryInterface,mtgioAPIController _mtgioAPIController)
         {
             WebHostEnvironment = webHostEnvironment;
-            decklistRepository = DecklistRepository;
+            idecklistRepository = DecklistRepository;
+            itestRepository = _itestRepositoryInterface;
             mtgioAPIController = _mtgioAPIController;
         }
         #endregion
-        #region publicFunctions
+        #region publicAsyncFunctions
         public async Task<IEnumerable<decklist>> GetAllDeckListsAsync()
         {
-            return await decklistRepository.GetAllDeckListsAsync();
+            return await idecklistRepository.GetAllDeckListsAsync();
         }
 
         public async Task<decklist> GetDeckListByIdAsync(int id)
         {
-            return await decklistRepository.GetDeckListByIdAsync(id);
+            return await idecklistRepository.GetDeckListByIdAsync(id);
         }
 
         public async Task<decklist> DeleteDeckList(int id)
         {
-            var decklist = await decklistRepository.GetDeckListByIdAsync(id);
-            decklistRepository.Delete(decklist);
+            var decklist = await idecklistRepository.GetDeckListByIdAsync(id);
+            idecklistRepository.Delete(decklist);
             return decklist;
         }
 
         public async Task<decklist> UpdateDeckListAsync(decklist decklist)
         {
-            decklistRepository.Update(decklist);
-            return await decklistRepository.GetDeckListByIdAsync(decklist.id);
+            idecklistRepository.Update(decklist);
+            return await idecklistRepository.GetDeckListByIdAsync(decklist.id);
         }
         public async Task<List<string>> CreateNewDecklist(string requestBody)
         {
@@ -68,12 +70,20 @@ namespace MTG_Mvc.Services
             try
             {
                 deckList.deckName = "Default Deck Name";
-
+                card newCard = new card();
                 var requestList = convertRequestToList(requestBody); // name set and quantity isMainboard
                 foreach (var card in requestList)
                 {
+                    var cardExsists = itestRepository.checkIfCardExsists(card);
+                    if(!cardExsists)
+                    { 
                     var cardInfo = await getCardInfoFromAPI(card.name, card.set);
-                    var newCard = mapCardInfo(card, cardInfo);
+                    newCard = mapCardInfo(card, cardInfo);
+                    }
+                    else
+                    {
+                     newCard = itestRepository.GetCard(card);
+                    }
                     deckList.cards.Add(newCard);
                 }
                 deckList = addCardTypeQuantityToDecklist(deckList);
@@ -87,6 +97,13 @@ namespace MTG_Mvc.Services
             List<string> result = deckList.cards.Select(x => x.name).OrderBy(name => name).ToList();
             return result;
         }
+        #endregion
+        #region SyncronuspublicFunctions
+        public IEnumerable<decklist> GetAllDeckLists()
+        {
+            return idecklistRepository.GetAllDeckLists();
+        }
+
         #endregion
         #region privateFunctions
         private async Task<List<Card>> getCardInfoFromAPI(string cardName, string cardSet)
@@ -160,7 +177,7 @@ namespace MTG_Mvc.Services
         {
             try
             {
-                decklistRepository.Post(decklist);
+                idecklistRepository.Post(decklist);
 
             }
             catch (Exception e)
