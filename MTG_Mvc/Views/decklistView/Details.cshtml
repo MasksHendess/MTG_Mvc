@@ -16,7 +16,7 @@
                 <li><b>Mainboard</b></li>
                 @foreach (var card in Model.cards)
                 {
-                    @if (card.isMainBoard && !card.type.Contains("Land"))
+                    @if (card.isMainBoard && !card.type.Contains("Land") && card.quantity > 0)
                     {
                         <li id="@card.name" data-toggle="tooltip" title="<img src='@card.imageUrl' >" data-placement="right">
 
@@ -30,7 +30,7 @@
                 <li><br />Lands:</li>
                 @foreach (var card in Model.cards)
                 {
-                    @if (card.isMainBoard && card.type.Contains("Land"))
+                    @if (card.isMainBoard && card.type.Contains("Land") && card.quantity > 0)
                     {
                         <li id="@card.name" data-toggle="tooltip" title="<img src='@card.imageUrl' >" data-placement="right">
 
@@ -44,7 +44,7 @@
                 <li><br /><b>Sideboard</b></li>
                 @foreach (var card in Model.cards)
                 {
-                    @if (!card.isMainBoard)
+                    @if (!card.isMainBoard && card.quantity > 0)
                     {
                         <li id="@card.name" data-toggle="tooltip" title="<img src='@card.imageUrl' >" data-placement="right">
                             <a class="text-white" asp-area="" asp-controller="cardView" asp-action="Details" asp-route-id="@card.id">

@@ -15,5 +15,6 @@ namespace MTG_Mvc.DBContext
         }
         public DbSet<decklist> decklists { get; set; }
         public DbSet<card> cards { get; set; }
+        public DbSet<cardNames> doubleName_cards { get; set; }
     }
 }

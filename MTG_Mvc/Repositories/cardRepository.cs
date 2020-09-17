@@ -32,6 +32,13 @@ namespace MTG_Mvc.Repositories
         public card GetCard(card Card)
         {
             var cards = dbContext.cards.Where(x => x.name == Card.name).FirstOrDefault();
+            var dublename = dbContext.doubleName_cards.ToList();
+
+            cardNames names = new cardNames();
+            names.firstName =  dublename.Where(z => z.cardid == cards.id).Select(x => x.firstName).FirstOrDefault();
+            names.secondName = dublename.Where(z => z.cardid == cards.id).Select(x => x.secondName).FirstOrDefault();
+            Card.cardNames = names;
+
             Card.imageUrl = cards.imageUrl;   //deckList.FirstOrDefault().ImageUrl;
             Card.artist = cards.artist; //deckList.FirstOrDefault().Artist;
 
@@ -47,5 +54,16 @@ namespace MTG_Mvc.Repositories
             return Card;
         }
 
+        public void PostcardNames(cardNames cardNames)
+        {
+            dbContext.doubleName_cards.Add(cardNames);
+            dbContext.SaveChanges();
+        }
+
+        public void PostCard(card card)
+        {
+            dbContext.cards.Add(card);
+            dbContext.SaveChanges();
+        }
     }
 }

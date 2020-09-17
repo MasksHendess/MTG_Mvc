@@ -13,15 +13,17 @@ namespace MTG_Mvc.Controllers
 {
     public class decklistViewController : Controller
     {
+        #region properties
         //private readonly SqlDbContext _context;
         private readonly IdecklistServiceInterface IdecklistService;
-
+        #endregion
+        #region constructor
         public decklistViewController(SqlDbContext context, IdecklistServiceInterface idecklistServiceInterface)
         {
             //_context = context;
             IdecklistService = idecklistServiceInterface;
         }
-
+        #endregion
         // GET: decklistView
         public async Task<IActionResult> Index()
         {

@@ -31,6 +31,7 @@ namespace MTG_Mvc.Domain.Entities
         public bool isMainBoard { get; set; }
         [ForeignKey("decklist")]
         public int decklistid { get; set; }
+        public cardNames cardNames { get; set; } 
 
     }
 }

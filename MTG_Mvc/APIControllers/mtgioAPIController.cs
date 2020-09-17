@@ -61,9 +61,28 @@ namespace MTG_Mvc.APIControllers
 
             if (result.IsSuccess)
             {
+                bool cardHasTwoNames = false;
+                string secondName = "";
                 foreach (var card in result.Value)
                 {
                     value.Add(card); //= result.Value;
+                    if (card.Names != null)
+                    {
+                        cardHasTwoNames = true;
+                        secondName = card.Names[1];
+                    }
+                }
+
+                if(cardHasTwoNames)
+                {
+                     result = await service.Where(x => x.Name, secondName).AllAsync();
+                    if (result.IsSuccess)
+                    {
+                        foreach (var card in result.Value)
+                        {
+                            value.Add(card);
+                        }
+                    }
                 }
             }
             else

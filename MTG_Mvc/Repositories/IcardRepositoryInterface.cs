@@ -10,5 +10,7 @@ namespace MTG_Mvc.Repositories
     {
         bool checkIfCardExsists(card card);
         card GetCard(card Card);
+        void PostcardNames(cardNames cardNames);
+        void PostCard(card card);
     }
 }

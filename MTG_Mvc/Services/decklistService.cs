@@ -26,17 +26,17 @@ namespace MTG_Mvc.Services
     {
         #region properties
         private readonly IdecklistRepositoryInterface idecklistRepository;
-        private readonly IcardRepositoryInterface itestRepository;
+        private readonly IcardRepositoryInterface icardRepository;
         private readonly mtgioAPIController mtgioAPIController;
         #endregion
         #region constructor
         public IWebHostEnvironment WebHostEnvironment { get; }
         public decklistService(IWebHostEnvironment webHostEnvironment, IdecklistRepositoryInterface DecklistRepository,
-        IcardRepositoryInterface _itestRepositoryInterface,mtgioAPIController _mtgioAPIController)
+        IcardRepositoryInterface _icardRepositoryInterface, mtgioAPIController _mtgioAPIController)
         {
             WebHostEnvironment = webHostEnvironment;
             idecklistRepository = DecklistRepository;
-            itestRepository = _itestRepositoryInterface;
+            icardRepository = _icardRepositoryInterface;
             mtgioAPIController = _mtgioAPIController;
         }
         #endregion
@@ -65,36 +65,49 @@ namespace MTG_Mvc.Services
         }
         public async Task<List<string>> CreateNewDecklist(string requestBody)
         {
-            decklist deckList = new decklist();
-
+            List<string> result = new List<string>();
             try
             {
+                decklist deckList = new decklist();
+
                 deckList.deckName = "Default Deck Name";
-                card newCard = new card();
                 var requestList = convertRequestToList(requestBody); // name set and quantity isMainboard
                 foreach (var card in requestList)
                 {
-                    var cardExsists = itestRepository.checkIfCardExsists(card);
-                    if(!cardExsists)
-                    { 
-                    var cardInfo = await getCardInfoFromAPI(card.name, card.set);
-                    newCard = mapCardInfo(card, cardInfo);
+                    card newCard = new card();
+                    var cardExsists = icardRepository.checkIfCardExsists(card);
+                    if (!cardExsists)
+                    {
+                        var cardInfo = await getCardInfoFromAPI(card.name, card.set);
+
+                        
+                        newCard = mapCardInfo(card, cardInfo, false);
+                        deckList.cards.Add(newCard);
+
+                        if (cardInfo.FirstOrDefault().Names != null)
+                        {
+                            card otherCard = new card();
+                            otherCard = mapCardInfo(otherCard, cardInfo, true);
+                            deckList.cards.Add(otherCard);
+                        }
                     }
                     else
                     {
-                     newCard = itestRepository.GetCard(card);
+                        newCard = icardRepository.GetCard(card);
+                        deckList.cards.Add(newCard);
                     }
-                    deckList.cards.Add(newCard);
                 }
                 deckList = addCardTypeQuantityToDecklist(deckList);
                 saveDecklistToDB(deckList);
+
+               
+                result = deckList.cards.Select(x => x.name).OrderBy(name => name).ToList();
             }
             catch (Exception e)
             {
                 throw new Exception("Something went wrong.", e);
             }
 
-            List<string> result = deckList.cards.Select(x => x.name).OrderBy(name => name).ToList();
             return result;
         }
         #endregion
@@ -112,8 +125,32 @@ namespace MTG_Mvc.Services
             return result;
         }
 
-        private card mapCardInfo(card newCard, List<Card> cards)
+        private card mapCardInfo(card newCard, List<Card> cards, bool splitCard)
         {
+            if (splitCard)
+            {
+
+                var obj = cards.Where(x => x.ImageUrl != null).LastOrDefault();
+                newCard.imageUrl = obj.ImageUrl;   //deckList.FirstOrDefault().ImageUrl;
+                newCard.artist = obj.Artist; //deckList.FirstOrDefault().Artist;
+
+                newCard.set = cards.FirstOrDefault().Set;
+
+                newCard.cmc = Convert.ToDecimal(cards.LastOrDefault().Cmc); // Mana Cost number
+                newCard.manaCost = cards.LastOrDefault().ManaCost; // Mana Cost string {1}{R}
+                newCard.flavourText = cards.LastOrDefault().Flavor;
+                newCard.rarity = cards.LastOrDefault().Rarity;
+                newCard.type = cards.LastOrDefault().Type;
+                newCard.text = cards.LastOrDefault().Text;
+                newCard.power = cards.LastOrDefault().Power;
+                newCard.toughness = cards.LastOrDefault().Toughness;
+
+                newCard.name = cards.LastOrDefault().Name;
+
+               // icardRepository.PostcardNames(names);
+            }
+            else
+            { 
             var OBJ = cards.Where(x => x.ImageUrl != null).FirstOrDefault();
             newCard.imageUrl = OBJ.ImageUrl;   //deckList.FirstOrDefault().ImageUrl;
             newCard.artist = OBJ.Artist; //deckList.FirstOrDefault().Artist;
@@ -127,6 +164,14 @@ namespace MTG_Mvc.Services
             newCard.text = cards.FirstOrDefault().Text;
             newCard.power = cards.FirstOrDefault().Power;
             newCard.toughness = cards.FirstOrDefault().Toughness;
+                if (cards.FirstOrDefault().Names != null)
+                {
+                    cardNames names = new cardNames();
+                    names.firstName = cards.FirstOrDefault().Names[0];
+                    names.secondName = cards.FirstOrDefault().Names[1];
+                    newCard.cardNames = names;
+                }
+            }
 
             return newCard;
         }
