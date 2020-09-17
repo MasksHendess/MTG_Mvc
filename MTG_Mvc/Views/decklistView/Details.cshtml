@@ -3,55 +3,78 @@
 @{
     ViewData["Title"] = "Details";
 }
-@{
-    int Cards = 0;
-    foreach (var item in Model.cards)
-    {
-        if (item.isMainBoard)
-            Cards += item.quantity;
-    }
-}
+
 @section Scripts
 {
-    <script src="~/js/decklistViewDetails.js" > </script>
+    <script src="~/js/decklistViewDetails.js"></script>
 }
-<div class="text-center">
-    <Row>
-        <div style="text-align:left;" class="col-lg-4">
+<div class="text-left">
+    <h2>@Model.deckName</h2>
+    <div class="row">
+        <div class="text-left col-lg-4">
             <ul style="list-style-type:none;">
-                <li><h2>@Model.deckName</h2></li>
-                <li><p>Cards: @Cards</p></li>
                 <li><b>Mainboard</b></li>
                 @foreach (var card in Model.cards)
                 {
-                    @if (card.isMainBoard)
+                    @if (card.isMainBoard && !card.type.Contains("Land") && card.quantity > 0)
                     {
-            <li id="@card.name" data-toggle="tooltip" title="<img src='@card.imageUrl' >" data-placement="right">
+                        <li id="@card.name" data-toggle="tooltip" title="<img src='@card.imageUrl' >" data-placement="right">
 
-                <a  style="color: black" asp-area="" asp-controller="cardView" asp-action="Details" asp-route-id="@card.id">
-                    @card.quantity x @card.name
-                </a>
-            </li>
+                            <a class="text-white" asp-area="" asp-controller="cardView" asp-action="Details" asp-route-id="@card.id">
+                                @card.quantity x @card.name
+                            </a>
+                        </li>
                     }
                 }
-                <li><b>Sideboard</b></li>
+
+                <li><br />Lands:</li>
                 @foreach (var card in Model.cards)
                 {
-                    @if (!card.isMainBoard)
+                    @if (card.isMainBoard && card.type.Contains("Land") && card.quantity > 0)
                     {
-            <li id="@card.name" data-toggle="tooltip" title="<img src='@card.imageUrl' >" data-placement="right">
-                <a style="color: black" asp-area="" asp-controller="cardView" asp-action="Details" asp-route-id="@card.id">
-                    @card.quantity x @card.name
-                </a>
-            </li>
+                        <li id="@card.name" data-toggle="tooltip" title="<img src='@card.imageUrl' >" data-placement="right">
+
+                            <a class="text-white" asp-area="" asp-controller="cardView" asp-action="Details" asp-route-id="@card.id">
+                                @card.quantity x @card.name
+                            </a>
+                        </li>
                     }
                 }
-            <li>
-                    <a asp-action="Edit" asp-route-id="@Model.id">Edit</a>|
-                    <a asp-action="DetailsSpoiler" asp-route-id="@Model.id">Spoilerview</a>|
-                    <a asp-action="Index">Back to List</a>
-            </li>
+
+                <li><br /><b>Sideboard</b></li>
+                @foreach (var card in Model.cards)
+                {
+                    @if (!card.isMainBoard && card.quantity > 0)
+                    {
+                        <li id="@card.name" data-toggle="tooltip" title="<img src='@card.imageUrl' >" data-placement="right">
+                            <a class="text-white" asp-area="" asp-controller="cardView" asp-action="Details" asp-route-id="@card.id">
+                                @card.quantity x @card.name
+                            </a>
+                        </li>
+                    }
+                }
+                <li>
+
+                </li>
             </ul>
         </div>
-    </Row>
+        <div class="col-lg-2">
+
+            <ul style="list-style-type:none;">
+                <li><b>Additional info:</b></li>
+                <li>Cards: @Model.cardsAmount</li>
+                <li> Lands: @Model.landsAmount</li>
+                <li> Instants: @Model.instantsAmount</li>
+                <li> Sorcery: @Model.sorceriesAmount</li>
+                <li> Creatures: @Model.creaturesAmount</li>
+                <li> Avarage CMC: @Model.avarageCMC</li>
+            </ul>
+
+        </div>
+    </div>
+    <div class="row">
+        <!-- <a asp-action="Edit" asp-route-id="@Model.id">Edit</a> |-->
+        <a asp-action="DetailsSpoiler" asp-route-id="@Model.id">Spoilerview</a> |
+        <a asp-action="Index">Back to List</a>
+    </div>
 </div>

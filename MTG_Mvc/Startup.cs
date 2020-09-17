@@ -36,9 +36,12 @@ namespace MTG_Mvc
             services.AddScoped<decklistRepository>();
             services.AddScoped<mtgioAPIController>();
 
-            services.AddScoped(typeof(IdecklistServiceInterface), typeof(decklistService));
+            services.AddScoped<cardService>();
+            services.AddScoped<cardRepository>();
 
+            services.AddScoped(typeof(IdecklistServiceInterface), typeof(decklistService));
             services.AddScoped(typeof(IdecklistRepositoryInterface), typeof(decklistRepository));
+            services.AddScoped(typeof(IcardRepositoryInterface), typeof(cardRepository));
 
             services.AddMvc();
         }

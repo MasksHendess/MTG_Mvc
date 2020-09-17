@@ -5,13 +5,16 @@
 }
 
 <h1>Index</h1>
-<div class=" row">
+<div class=" row bg-dark text-white">
     @foreach (var card in @Model)
     {
-        <div class="card col-lg-3">
+        if(card.quantity > 0 )
+        { 
+        <div class="card col-lg-3 bg-dark text-white">
             <a asp-action="Details" asp-route-id="@card.id">
                 <img class="card-img" src="@card.imageUrl">
             </a>
         </div>
+        }
     }
 </div>

@@ -1,30 +1,45 @@
-﻿@model MTG_Mvc.Domain.Entities.card
+﻿@model List<MTG_Mvc.Domain.Entities.card>
 
 @{
     ViewData["Title"] = "Details";
 }
 
 <div class="text-center">
-    <div class="row">
+    @foreach (var item in @Model)
+	{
+
+    <div class="row" style="margin: 5%">
         <div class="col-lg-3">
-           <img src="@Model.imageUrl" />
+            <img src="@item.imageUrl" />
         </div>
         <div class="col-lg-3">
-            @Model.name  @Model.cmc
+            @item.name  @item.manaCost
 
 
             <p>
-                @Model.type
-                @Model.rarity
-                @Model.set
-            </p> 
-            <p>
-                @Model.text
+                @item.type
+                @item.rarity
+                @item.set
             </p>
             <p>
-                <i>  @Model.flavourText </i>
+                @item.text
             </p>
-            Artist: @Model.artist
+            <p>
+                <i>  @item.flavourText </i>
+            </p>
+            @if(item.power!= null && item.toughness !=null)
+            {
+                <p>@item.power / @item.toughness</p>
+            }
+            <p>Artist: @item.artist </p>
+            <a asp-controller="decklistView" asp-action="Details" asp-route-id="@item.decklistid">
+                To Deck
+            </a>|
+            <a asp-action="Index">
+                Back
+            </a>
         </div>
+
     </div>
+    }
 </div>

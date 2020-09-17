@@ -10,12 +10,16 @@ namespace MTG_Mvc.Repositories
 {
     public class decklistRepository : IdecklistRepositoryInterface
     {
+        #region properties
         private readonly SqlDbContext dbContext;
+        #endregion
+        #region constructor
         public decklistRepository(SqlDbContext DBContext)
         {
             dbContext = DBContext;
         }
-
+        #endregion
+        #region publicAsyncFunctions
         public async Task<IEnumerable<decklist>> GetAllDeckListsAsync()
         {
            // var cards = dbContext.cards.ToList();
@@ -37,6 +41,18 @@ namespace MTG_Mvc.Repositories
             }
             return deck;
         }
+        #endregion
+        #region publicSyncronusFunctions
+        public IEnumerable<decklist> GetAllDeckLists()
+        {
+            var decks = dbContext.decklists.ToList();
+            foreach (var item in decks)
+            {
+                var cards = dbContext.cards.Where(x => x.decklistid == item.id).ToList();
+                item.cards = cards;
+            }
+            return decks;
+        }
         public void Delete(decklist decklist)
         {
             dbContext.decklists.Remove(decklist);
@@ -54,5 +70,6 @@ namespace MTG_Mvc.Repositories
             dbContext.decklists.Update(decklist);
             dbContext.SaveChanges();
         }
+        #endregion
     }
 }
