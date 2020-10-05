@@ -37,6 +37,7 @@ namespace MTG_Mvc.APIControllers
             //Exceptional<List<Card>> result = new Exceptional<List<Card>>();
             List<Card> value = new List<Card>();
             Exceptional<List<Card>> result = new Exceptional<List<Card>>();
+
             if (cardName.Contains("/")) // Cards that contain / are split cards or aftermath cards
             {
                 var splitcard = cardName.Split(" ");
@@ -47,7 +48,7 @@ namespace MTG_Mvc.APIControllers
                     // The only sets that contains all unique aftermath cards (some reprits exist in some commander product)
 
                     result = await service.Where(x => x.Name, splitcard[0]).Where(x => x.Layout, "aftermath").AllAsync();
-                 //   var resultB = await service.Where(x => x.Name, splitcard[2]).Where(x => x.Layout, "aftermath").AllAsync();
+                    //   var resultB = await service.Where(x => x.Name, splitcard[2]).Where(x => x.Layout, "aftermath").AllAsync();
                 }
                 else
                 {
@@ -58,6 +59,8 @@ namespace MTG_Mvc.APIControllers
             {
                 result = await service.Where(x => x.Name, cardName).AllAsync();
             }
+
+           // result = await service.Where(x => x.Name, cardName).AllAsync();
 
             if (result.IsSuccess)
             {

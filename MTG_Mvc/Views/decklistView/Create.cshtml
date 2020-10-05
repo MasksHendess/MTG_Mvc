@@ -4,9 +4,8 @@
     ViewData["Title"] = "Create";
 }
 
-<h1>Create</h1>
+<h1>Create new Decklist</h1>
 
-<h4>decklist</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -19,14 +18,20 @@
             </div>
             <div class="form-group">
                 <label asp-for="cards" class="control-label"></label>
-                <textarea asp-for="cards" class="form-control">
+                <textarea asp-for="requestBody" class="form-control" style="height:35em">
                 </textarea>
-                <span asp-validation-for="cards" class="text-danger"></span>
+                <span asp-validation-for="requestBody" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>
         </form>
+    </div>
+    <div class="col-md-4">
+        <p>Each line represents 1 card</p>
+        <p>Example:</p>
+        <p>4 Viashino Pyromancer (M19) | This works</p>
+        <p>4 Viashino Pyromancer (M19) 2 Shock (M19) | This dosn't work</p>
     </div>
 </div>
 

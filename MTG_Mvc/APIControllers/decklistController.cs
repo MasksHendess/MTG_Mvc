@@ -48,7 +48,7 @@ namespace MTG_Mvc.APIControllers
                 return BadRequest("Invalid Model");
             }
 
-            var result = await decklistService.CreateNewDecklist(requestBody);
+            var result = await decklistService.CreateNewDecklist(requestBody, "Default Deck");
             return Ok(result);
         }
 

@@ -14,6 +14,7 @@ namespace MTG_Mvc.Domain.Entities
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int id { get; set; }
+        [Required]
         public string deckName { get; set; }
         public int cardsAmount { get; set; }
         public int creaturesAmount { get; set; }
@@ -23,5 +24,7 @@ namespace MTG_Mvc.Domain.Entities
 
         public int avarageCMC { get; set; }
         public List<card> cards { get; set; } = new List<card>();
+        [Required]
+        public string requestBody { get; set; }
     }
 }

@@ -109,35 +109,40 @@ namespace MTG_Mvc.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("id,deckName")] decklist decklist)
+        public async Task<IActionResult> Edit(int id,decklist decklist)
         {
-            if (id != decklist.id)
-            {
-                return NotFound();
-            }
+            //if (id != decklist.id)
+            //{
+            //    return NotFound();
+            //}
 
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                  await IdecklistService.UpdateDeckListAsync(decklist);
-                    //_context.Update(decklist);
-                    //await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!decklistExists(decklist.id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            return View(decklist);
+
+           var deck = await IdecklistService.GetDeckListByIdAsync(id);
+            deck.deckName = decklist.deckName;
+            await IdecklistService.UpdateDeckListAsync(deck);
+
+            //if (ModelState.IsValid)
+            //{
+            //    try
+            //    {
+            //      await IdecklistService.UpdateDeckListAsync(decklist);
+            //        //_context.Update(decklist);
+            //        //await _context.SaveChangesAsync();
+            //    }
+            //    catch (DbUpdateConcurrencyException)
+            //    {
+            //        if (!decklistExists(decklist.id))
+            //        {
+            //            return NotFound();
+            //        }
+            //        else
+            //        {
+            //            throw;
+            //        }
+            //    }
+            //    return RedirectToAction(nameof(Index));
+            //}
+            return RedirectToAction(nameof(Index));
         }
 
         // POST: decklistView/Create
@@ -146,18 +151,19 @@ namespace MTG_Mvc.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("id,deckName,cards")] decklist decklist)
+        public async Task<IActionResult> Create(decklist decklist)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
 
-                await IdecklistService.GetAllDeckListsAsync(); // Change this
-
+               // await IdecklistService.GetAllDeckListsAsync(); // Change this
                 //_context.Add(decklist);
                 //await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return View(decklist);
             }
-            return View(decklist);
+
+            var result =  await IdecklistService.CreateNewDecklist(decklist.requestBody, decklist.deckName);
+            return RedirectToAction(nameof(Index));
         }
 
         // POST: decklistView/Delete/5

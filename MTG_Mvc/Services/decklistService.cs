@@ -63,14 +63,15 @@ namespace MTG_Mvc.Services
             idecklistRepository.Update(decklist);
             return await idecklistRepository.GetDeckListByIdAsync(decklist.id);
         }
-        public async Task<List<string>> CreateNewDecklist(string requestBody)
+        public async Task<List<string>> CreateNewDecklist(string requestBody, string deckName)
         {
             List<string> result = new List<string>();
             try
             {
                 decklist deckList = new decklist();
 
-                deckList.deckName = "Default Deck Name";
+                
+                deckList.deckName = deckName;
                 var requestList = convertRequestToList(requestBody); // name set and quantity isMainboard
                 foreach (var card in requestList)
                 {

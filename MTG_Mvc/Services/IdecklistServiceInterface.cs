@@ -11,7 +11,7 @@ namespace MTG_Mvc.Services
         Task<IEnumerable<decklist>> GetAllDeckListsAsync();
         Task<decklist> GetDeckListByIdAsync(int id);
         Task<decklist> DeleteDeckList(int id);
-        Task<List<string>> CreateNewDecklist(string requestBody);
+        Task<List<string>> CreateNewDecklist(string requestBody, string deckName);
         Task<decklist> UpdateDeckListAsync(decklist decklist);
     }
 }

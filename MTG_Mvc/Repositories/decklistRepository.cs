@@ -61,6 +61,9 @@ namespace MTG_Mvc.Repositories
 
         public void Post(decklist decklist)
         {
+            if (decklist.requestBody == null)
+                decklist.requestBody = "Finished ";
+
             dbContext.decklists.Add(decklist);
             dbContext.SaveChanges();
         }

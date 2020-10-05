@@ -40,7 +40,7 @@ namespace MTG_Mvc.Controllers
                 var secondCard = context.cards.Where(x => x.name == secondName).FirstOrDefault();
                 if(firstCard== null)
                 {
-                    firstCard = context.cards.Where(x => x.name == firstName +" /// " + secondName).FirstOrDefault();
+                    firstCard = context.cards.Where(x => x.name.Contains(secondName) /*== firstName +" /// " + secondName*/).FirstOrDefault();
                 }
                 results.Add(firstCard);
                 results.Add(secondCard);
