@@ -16,6 +16,7 @@ namespace MTG_Mvc.Domain.Entities
         public int id { get; set; }
         [Required]
         public string deckName { get; set; }
+        public string format { get; set; }
         public int cardsAmount { get; set; }
         public int creaturesAmount { get; set; }
         public int sorceriesAmount { get; set; }
