@@ -63,7 +63,7 @@ namespace MTG_Mvc.Services
             idecklistRepository.Update(decklist);
             return await idecklistRepository.GetDeckListByIdAsync(decklist.id);
         }
-        public async Task<List<string>> CreateNewDecklist(string requestBody, string deckName)
+        public async Task<List<string>> CreateNewDecklist(string requestBody, string deckName, string format)
         {
             List<string> result = new List<string>();
             try
@@ -72,6 +72,7 @@ namespace MTG_Mvc.Services
 
                 
                 deckList.deckName = deckName;
+                deckList.format = format;
                 var requestList = convertRequestToList(requestBody); // name set and quantity isMainboard
                 foreach (var card in requestList)
                 {

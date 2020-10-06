@@ -47,7 +47,7 @@ namespace MTG_Mvc.APIControllers
                     // Amonkhet Remastered, Amonkhet, Hour of Devestation 
                     // The only sets that contains all unique aftermath cards (some reprits exist in some commander product)
 
-                    result = await service.Where(x => x.Name, splitcard[0]).Where(x => x.Layout, "aftermath").AllAsync();
+                    result = await service.Where(x => x.Name, splitcard[0]).Where(x => x.Layout, "aftermath").AllAsync(); 
                     //   var resultB = await service.Where(x => x.Name, splitcard[2]).Where(x => x.Layout, "aftermath").AllAsync();
                 }
                 else

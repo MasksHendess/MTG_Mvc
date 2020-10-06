@@ -37,7 +37,7 @@
                 (POST)Add new Deck
             </td>
             <td>
-                /api/decklist
+                /api/decklist   (requires body)
             </td>
         </tr>
         <tr>
@@ -66,3 +66,11 @@
         </tr>
     </tbody>
 </table>
+<h3>Example body</h3>
+    @{
+        MTG_Mvc.Domain.Entities.PostRequestBodyExample example = new Domain.Entities.PostRequestBodyExample();
+        foreach (var item in example.exampleCards)
+        {
+        <p> @item</p>
+        }
+    }
